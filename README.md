@@ -7,5 +7,6 @@ Toy OS for i686 arch
 - GCC cross-compiler for i686 in $PATH
 
 ## Usage
-```make install
+```
+make install
 make run```
