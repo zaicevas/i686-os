@@ -8,5 +8,6 @@ Toy OS for i686 arch
 
 ## Usage
 ```
-make install
-make run```
+make
+make run
+```
