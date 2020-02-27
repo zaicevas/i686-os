@@ -1,7 +1,10 @@
 #include <stdint.h>
 
-//#define MULTIBOOT1_HEADER_MAGIC 0x1BADB002
-//#define MULTIBOOT1_HEADER_FLAGS 0x00000003
+#if defined(__linux__)
+	#error "This code must be compiled with a cross-compiler"
+#elif !defined(__i386__)
+	#error "This code must be compiled with an x86-elf compiler"
+#endif
 
 #define MULTIBOOT_HEADER_MAGIC 0xE85250D6
 #define MULTIBOOT_HEADER_ARCHITECTURE 0x0		// 32-bit (procteted) i386
@@ -23,19 +26,9 @@ struct multiboot_header {
 
 } mb_header __attribute__((section(".multiboot")));
 
-/*
-struct multiboot1_header {
-	uint32_t magic = MULTIBOOT1_HEADER_MAGIC;
-	uint32_t flags = MULTIBOOT_HEADER_FLAGS;
-	uint32_t checksum = -(MULTIBOOT1_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS);
-} mb1_header __attribute__((section(".multiboot")));
-*/
-
-
 #if defined(__cplusplus)
 extern "C"
 #endif
 int kernel_main() {
-
 	return 0;
 }
