@@ -20,7 +20,7 @@ iso:
 	@rm -r tmp
 
 clean:
-	@rm -r ${BIN_PATH}
+	@rm -rf ${BIN_PATH}
 
 font:
 	@objcopy -O elf32-i386 -B i386 -I binary assets/${FONT_NAME}.${FONT_EXT} ${BIN_PATH}/${FONT_NAME}.o
