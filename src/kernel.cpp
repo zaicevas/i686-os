@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <font.h>
 #include <debug.h>
+#include <string.h>
 
 #if defined(__linux__)
 	#error "This code must be compiled with a cross-compiler"
@@ -118,22 +119,7 @@ struct multiboot_header {
 	multiboot_tag_terminator terminator;
 } mb_header __attribute__((section(".multiboot")));
 
-char* itoa(uint32_t val){
-// http://www.strudel.org.uk/itoa/
-	if (val == 0)
-		return "0";
-	static char buf[32] = {0};
-	const uint64_t BASE = 10;
-	
-	uint64_t i = 30;
-	
-	for(; val && i ; --i, val /= BASE)
-	
-		buf[i] = "0123456789abcdef"[val % BASE];
-	
-	return &buf[i+1];
-	
-}
+
 
 void qemu_print_font(PSF_font font) {
 	qemu_printf("magic: ");
@@ -235,16 +221,7 @@ int kernel_main(uint64_t addr) {
 		}
 	}
 
-	uint8_t *font = get_font_array();
-
-//	putchar((char *) framebuffer, 'h', 5, 10, 0x125347, 0x000000);
-
-//	for (uint8_t i=0; i<100; i++) {
-//		putchar('H', i, 350, 0xFFFFFF, 0x012345);
-//	}
-
-	char *yext = "Hello world!";
-	draw_text(&canvas, yext);
+	draw_text(&canvas, "Privet, Jurij Zaicev.");
 
 	return 0;
 }

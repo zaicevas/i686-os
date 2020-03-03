@@ -1,8 +1,10 @@
 #ifndef STRING_H
-
-#include <stdint.h>
 #define STRING_H
 
-uint32_t strlen(const char * s);
+#include <stdint.h>
+
+uint32_t strlen(const char* s);
+
+char* itoa(uint32_t val);
 
 #endif
