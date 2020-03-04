@@ -23,6 +23,6 @@ struct canvas_t {
 
 uint8_t *get_font(char c);
 
-void draw_text(canvas_t* canvas, char* text);
+void draw_text(canvas_t *canvas, char *text);
 
 #endif

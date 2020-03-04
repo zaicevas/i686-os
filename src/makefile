@@ -2,6 +2,7 @@
 FONT_NAME = 'zap-vga16'
 FONT_EXT = 'psf'
 BIN_PATH = '../bin'
+INCLUDE_PATH = 'include'
 ISO_NAME = 'kernel.iso'
 
 install: compile iso
@@ -10,15 +11,17 @@ compile: boot.asm kernel.cpp font.cpp
 	@mkdir -p ${BIN_PATH}
 	${MAKE} font
 	@nasm -felf32 boot.asm -o ${BIN_PATH}/boot.o
-	@i686-elf-g++ debug.cpp -I include -o ${BIN_PATH}/debug.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -lgcc
-	@i686-elf-g++ string.cpp -I include -o ${BIN_PATH}/string.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -lgcc
-	@i686-elf-g++ font_parser.cpp -I include -o ${BIN_PATH}/font_parser.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -lgcc
-	@i686-elf-g++ font.cpp -I include -o ${BIN_PATH}/font.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -lgcc
-	@i686-elf-g++ -c kernel.cpp -o ${BIN_PATH}/kernel.o -I include -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -lgcc
+	@i686-elf-g++ string.cpp -I ${INCLUDE_PATH} -o ${BIN_PATH}/string.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -lgcc
+	@i686-elf-g++ debug.cpp -I ${INCLUDE_PATH} -o ${BIN_PATH}/debug.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -lgcc
+	@i686-elf-g++ multiboot2.cpp -I ${INCLUDE_PATH} -o ${BIN_PATH}/multiboot2.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -lgcc
+	@i686-elf-g++ font.cpp -I ${INCLUDE_PATH} -o ${BIN_PATH}/font.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -lgcc
+	@i686-elf-g++ font_parser.cpp -I ${INCLUDE_PATH} -o ${BIN_PATH}/font_parser.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -lgcc
+	@i686-elf-g++ -c kernel.cpp -o ${BIN_PATH}/kernel.o -I ${INCLUDE_PATH} -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -lgcc
 	i686-elf-g++ -T linker.ld -o ${BIN_PATH}/kernel.elf -ffreestanding -O2 -nostdlib -lgcc \
 		${BIN_PATH}/boot.o \
 		/home/fern/os/cross/src/build-gcc/i686-elf/libgcc/_udivdi3.o \
 		/home/fern/os/cross/src/build-gcc/i686-elf/libgcc/_umoddi3.o \
+		${BIN_PATH}/multiboot2.o \
 		${BIN_PATH}/kernel.o \
 		${BIN_PATH}/debug.o \
 		${BIN_PATH}/${FONT_NAME}.o \

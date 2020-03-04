@@ -11,7 +11,8 @@ global _start:function (_start.end - _start)
 
 _start:
 	mov esp, stack_top
-	push ebx
+
+	push ebx	; multiboot2 information data structure
 	call kernel_main
 .hang:
 	cli
