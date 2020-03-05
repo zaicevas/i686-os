@@ -41,7 +41,7 @@ void draw_char(canvas_t *canvas, char c) {
 	}
 }
 
-void draw_text(canvas_t *canvas, char *text) {
-	for (char *curr = text; *curr; curr++)
-		draw_char(canvas, *curr);
+void draw_text(canvas_t *canvas, const char *text) {
+	for (uint32_t i=0; i<strlen(text); i++)
+		draw_char(canvas, text[i]);
 }

@@ -3,6 +3,6 @@
 
 #define PORT_COM1 0x3f8
 
-void qemu_printf(char * s, ...);
+void qemu_printf(const char *s, ...);
 
 #endif

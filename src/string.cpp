@@ -7,7 +7,7 @@ uint32_t strlen(const char* s) {
     return len;
 }
 
-char* itoa(uint32_t val) {
+char* itoa(uint64_t val) {
 // http://www.strudel.org.uk/itoa/
 	if (val == 0)
 		return "0";

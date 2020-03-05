@@ -96,14 +96,13 @@ multiboot2_info get_multiboot2_info(uint64_t addr) {
 					(void*) framebuffer->framebuffer_addr,
 				};
 
-                result.color_info = framebuffer->color_info;
+				result.color_info = framebuffer->color_info;
 
-                result.framebuffer_type = static_cast<FRAMEBUFFER_TYPE>(framebuffer->framebuffer_type);
-
+				result.framebuffer_type = static_cast<FRAMEBUFFER_TYPE>(framebuffer->framebuffer_type);
+				
 				qemu_printf("framebuffer_bpp: ");
-				qemu_printf(itoa( framebuffer->framebuffer_bpp));
+				qemu_printf(itoa((uint64_t) framebuffer->framebuffer_bpp));
 				qemu_printf("\n");
-
 				qemu_printf("framebuffer_addr: ");
 				qemu_printf(itoa( framebuffer->framebuffer_addr));
 				qemu_printf("\n");
