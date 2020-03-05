@@ -25,3 +25,4 @@ g++ -S -masm=intel -o kernel.asm
 
 ### Other useful stuff
 - QEMU framebuffer address 0xFD000000 (https://wiki.osdev.org/Drawing_In_Protected_Mode)
+- Writing to a USB flash drive `sudo dd if=myos.iso of=/dev/sdx && sync`
