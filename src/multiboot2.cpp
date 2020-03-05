@@ -18,7 +18,8 @@ struct multiboot_tag {
   uint32_t size;
 };
 
-struct multiboot_tag_vbe {
+// currently not used 
+struct multiboot_vbe {
 	uint32_t type;
 	uint32_t size;
 	uint16_t vbe_mode;
@@ -27,21 +28,7 @@ struct multiboot_tag_vbe {
 	uint16_t vbe_interface_len;
 };
 
-struct multiboot_tag_framebuffer_common {
-	uint32_t type;
-	uint32_t size;
-  	uint64_t framebuffer_addr;
-  	uint32_t framebuffer_pitch;
-  	uint32_t framebuffer_width;
-  	uint32_t framebuffer_height;
-  	uint8_t framebuffer_bpp;
-  	uint8_t framebuffer_type;
-  	uint16_t reserved;
-
-	multiboot_framebuffer_color_info color_info;
-};
-
-struct __attribute__((aligned (8))) multiboot_tag_framebuffer {
+struct __attribute__((aligned (8))) multiboot_header_tag_framebuffer {
 	const uint16_t type = MULTIBOOT_HEADER_TAG_FRAMEBUFFER;
 	const uint16_t flags = MULTIBOOT_HEADER_FLAGS_NOT_OPTIONAL;
 	const uint32_t size = MULTIBOOT_HEADER_TAG_FRAMEBUFFER_SIZE;
@@ -50,7 +37,7 @@ struct __attribute__((aligned (8))) multiboot_tag_framebuffer {
 	const uint32_t depth = 32;
 };
 
-struct __attribute__((aligned (8))) multiboot_tag_information_request {
+struct __attribute__((aligned (8))) multiboot_header_tag_information_request {
 	const uint16_t type = MULTIBOOT_HEADER_TAG_INFORMATION_REQUEST;
 	const uint16_t flags = MULTIBOOT_HEADER_FLAGS_NOT_OPTIONAL;
 	const uint32_t size = 16;
@@ -60,7 +47,7 @@ struct __attribute__((aligned (8))) multiboot_tag_information_request {
 };
 
 // denotes last tag
-struct multiboot_tag_terminator {
+struct multiboot_header_tag_terminator {
 	const uint16_t type = 0;
 	const uint16_t flags = 0;
 	const uint32_t size = 8;
@@ -72,12 +59,12 @@ struct multiboot_header {
 	const uint32_t header_length = 64;
 	const uint32_t checksum = -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_ARCHITECTURE + header_length);
 
-	multiboot_tag_framebuffer mb_tag_framebuffer;
-	multiboot_tag_information_request mb_info_request;
-	multiboot_tag_terminator terminator;
+	multiboot_header_tag_framebuffer mb_tag_framebuffer;
+	multiboot_header_tag_information_request mb_info_request;
+	multiboot_header_tag_terminator terminator;
 } mb_header __attribute__((section(".multiboot")));
 
-void print_framebuffer_debug(multiboot_tag_framebuffer_common *framebuffer) {
+void print_framebuffer_debug(multiboot_framebuffer *framebuffer) {
 	qemu_printf("framebuffer_bpp: ");
 	qemu_printf(itoa((uint64_t) framebuffer->framebuffer_bpp));
 	qemu_printf("\n");
@@ -119,8 +106,8 @@ void print_framebuffer_debug(multiboot_tag_framebuffer_common *framebuffer) {
 	qemu_printf("\n");
 }
 
-multiboot2_info get_multiboot2_info(uint64_t addr) {
-    multiboot2_info result;
+multiboot_framebuffer* get_framebuffer(uint64_t addr) {
+    multiboot_framebuffer *framebuffer = nullptr;
 	for (multiboot_tag *tag = (multiboot_tag*) (addr + 8);
         tag->type != MULTIBOOT_INFORMATION_TAG_TYPE_END;
         tag = (struct multiboot_tag *) ((uint8_t *) tag + ((tag->size + 7) & ~7))) {
@@ -128,24 +115,11 @@ multiboot2_info get_multiboot2_info(uint64_t addr) {
 		switch (tag->type) {
 			case MULTIBOOT_INFORMATION_TAG_TYPE_FRAMEBUFFER:
 			{
-				multiboot_tag_framebuffer_common *framebuffer = (multiboot_tag_framebuffer_common*) tag;
-
-				result.canvas = { 
-					framebuffer->framebuffer_width, 
-					framebuffer->framebuffer_height, 
-					(framebuffer->framebuffer_bpp + 7) / 8, 
-					framebuffer->framebuffer_pitch,
-					(void*) framebuffer->framebuffer_addr,
-				};
-
-				result.color_info = framebuffer->color_info;
-				result.framebuffer_type = static_cast<FRAMEBUFFER_TYPE>(framebuffer->framebuffer_type);
-
+				framebuffer = (multiboot_framebuffer*) tag;
 				print_framebuffer_debug(framebuffer);
-				
 			}
 				break;
 		}
     }
-    return result; 
+    return framebuffer; 
 }
