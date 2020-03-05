@@ -77,6 +77,48 @@ struct multiboot_header {
 	multiboot_tag_terminator terminator;
 } mb_header __attribute__((section(".multiboot")));
 
+void print_framebuffer_debug(multiboot_tag_framebuffer_common *framebuffer) {
+	qemu_printf("framebuffer_bpp: ");
+	qemu_printf(itoa((uint64_t) framebuffer->framebuffer_bpp));
+	qemu_printf("\n");
+
+	qemu_printf("framebuffer_addr: ");
+	qemu_printf(itoa( framebuffer->framebuffer_addr));
+	qemu_printf("\n");
+
+	qemu_printf("framebuffer_type: ");
+	qemu_printf(itoa( framebuffer->framebuffer_type));
+	qemu_printf("\n");
+
+	qemu_printf("width: ");
+	qemu_printf(itoa( framebuffer->framebuffer_width ));
+	qemu_printf("\n");
+
+	qemu_printf("height: ");
+	qemu_printf(itoa( framebuffer->framebuffer_height));
+	qemu_printf("\n");
+
+	qemu_printf("pitch: ");
+	qemu_printf(itoa( framebuffer->framebuffer_pitch));
+	qemu_printf("\n");
+
+	qemu_printf("red_field_position: ");
+	qemu_printf(itoa( (framebuffer->color_info).framebuffer_red_field_position));
+	qemu_printf("\n");
+
+	qemu_printf("green_field_position: ");
+	qemu_printf(itoa( (framebuffer->color_info).framebuffer_green_field_position));
+	qemu_printf("\n");
+
+	qemu_printf("blue_field_position: ");
+	qemu_printf(itoa( (framebuffer->color_info).framebuffer_blue_field_position));
+	qemu_printf("\n");
+
+	qemu_printf("red_mask_size: ");
+	qemu_printf(itoa( (framebuffer->color_info).framebuffer_red_mask_size));
+	qemu_printf("\n");
+}
+
 multiboot2_info get_multiboot2_info(uint64_t addr) {
     multiboot2_info result;
 	for (multiboot_tag *tag = (multiboot_tag*) (addr + 8);
@@ -97,47 +139,10 @@ multiboot2_info get_multiboot2_info(uint64_t addr) {
 				};
 
 				result.color_info = framebuffer->color_info;
-
 				result.framebuffer_type = static_cast<FRAMEBUFFER_TYPE>(framebuffer->framebuffer_type);
+
+				print_framebuffer_debug(framebuffer);
 				
-				qemu_printf("framebuffer_bpp: ");
-				qemu_printf(itoa((uint64_t) framebuffer->framebuffer_bpp));
-				qemu_printf("\n");
-				qemu_printf("framebuffer_addr: ");
-				qemu_printf(itoa( framebuffer->framebuffer_addr));
-				qemu_printf("\n");
-
-				qemu_printf("framebuffer_type: ");
-				qemu_printf(itoa( framebuffer->framebuffer_type));
-				qemu_printf("\n");
-
-				qemu_printf("width: ");
-				qemu_printf(itoa( framebuffer->framebuffer_width ));
-				qemu_printf("\n");
-
-				qemu_printf("height: ");
-				qemu_printf(itoa( framebuffer->framebuffer_height));
-				qemu_printf("\n");
-
-				qemu_printf("pitch: ");
-				qemu_printf(itoa( framebuffer->framebuffer_pitch));
-				qemu_printf("\n");
-
-				qemu_printf("red_field_position: ");
-				qemu_printf(itoa( (framebuffer->color_info).framebuffer_red_field_position));
-				qemu_printf("\n");
-
-				qemu_printf("green_field_position: ");
-				qemu_printf(itoa( (framebuffer->color_info).framebuffer_green_field_position));
-				qemu_printf("\n");
-
-				qemu_printf("blue_field_position: ");
-				qemu_printf(itoa( (framebuffer->color_info).framebuffer_blue_field_position));
-				qemu_printf("\n");
-
-				qemu_printf("red_mask_size: ");
-				qemu_printf(itoa( (framebuffer->color_info).framebuffer_red_mask_size));
-				qemu_printf("\n");
 			}
 				break;
 		}

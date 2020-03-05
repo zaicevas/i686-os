@@ -14,7 +14,7 @@ char* itoa(uint64_t val) {
 	static char buf[32] = {0};
 	const uint8_t BASE = 10;
 
-	uint32_t i = 30;
+	uint64_t i = 30;
 	
 	for(; val && i ; --i, val /= BASE)
 		buf[i] = "0123456789abcdef"[val % BASE];
