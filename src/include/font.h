@@ -25,11 +25,11 @@ struct color_scheme_t {
 };
 
 struct canvas_t {
-	uint32_t width;
-	uint32_t height;
-	uint32_t bytes_per_pixel;
-	uint32_t bytes_per_line;
-	void *framebuffer_addr;
+	 uint32_t width;
+	 uint32_t height;
+	 uint32_t bytes_per_pixel;
+	 uint32_t bytes_per_line;
+	uint64_t framebuffer_addr;
 };
 
 uint8_t *get_font(char c);
