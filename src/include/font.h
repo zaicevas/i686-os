@@ -14,7 +14,7 @@ struct pixel_t {
 	uint8_t red;
 	uint8_t green;
 	uint8_t blue;
-	uint8_t alpha = 1;
+	uint8_t alpha = 0;
 };
 
 struct color_scheme_t {
@@ -25,11 +25,11 @@ struct color_scheme_t {
 };
 
 struct canvas_t {
-	 uint32_t width;
-	 uint32_t height;
-	 uint32_t bytes_per_pixel;
-	 uint32_t bytes_per_line;
-	uint64_t framebuffer_addr;
+	uint32_t width;
+	uint32_t height;
+	uint32_t bytes_per_pixel;
+	uint32_t bytes_per_line;
+	uint8_t *framebuffer_addr = nullptr;
 };
 
 uint8_t *get_font(char c);

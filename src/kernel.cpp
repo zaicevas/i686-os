@@ -1,8 +1,6 @@
 #include <stdint.h>
-#include <stddef.h>
 #include <font.h>
 #include <debug.h>
-#include <string.h>
 #include <multiboot2.h>
 
 #if defined(__linux__)
