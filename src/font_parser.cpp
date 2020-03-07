@@ -92,7 +92,7 @@ static void text_mode_print_char(canvas_t canvas, const char c) {
 		chars_x++;
 	}
 
-	if (chars_x >= 80) {
+	if (chars_x >= canvas.width) {
 		chars_x = 0;
 		chars_y++;
 	}
