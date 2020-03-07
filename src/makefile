@@ -4,9 +4,9 @@ FONT_EXT = psf
 
 CC = i686-elf-g++
 BIN_PATH = ../bin
-CFLAGS = -I ${INCLUDE_PATH} -c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti 
+CFLAGS = -I ${INCLUDE_PATH} -c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -g
 ASM_FLAGS = -felf32
-LINKER_FLAGS = -T ${LINKER_PATH} -ffreestanding -O2 -nostdlib -lgcc
+LINKER_FLAGS = -T ${LINKER_PATH} -ffreestanding -O2 -nostdlib -g -lgcc
 LINKER_PATH = linker.ld
 INCLUDE_PATH = include
 
@@ -18,7 +18,7 @@ ASM_FILES := ${wildcard *.asm}
 OBJ_FILES := ${patsubst %.cpp, ../bin/%.o, ${CPP_FILES}} \
 	${patsubst %.asm, ../bin/%.o, ${ASM_FILES}}
 
-.PHONY: all build clean run run_log_file check font 
+.PHONY: all build clean run run_debug run_log_file check font 
 
 all: clean build run
 
@@ -29,7 +29,10 @@ clean:
 	@rm -rf tmp
 
 run: ${ISO_KERNEL}
-	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio 
+	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -vga cirrus 
+
+run_debug: ${ISO_KERNEL}
+	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -vga cirrus -gdb tcp::26000 -S
 
 run_log_file:
 	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial file:debug.log

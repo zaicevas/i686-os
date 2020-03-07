@@ -5,6 +5,7 @@
 
 #define RGB_DEPTH 24
 #define VIDEO_MEMORY_ADDR 0xB8000
+#define BLACK_WHITE_TEXT 0x7
 
 static uint8_t chars_x = 0;
 static uint8_t chars_y = 0;
@@ -12,20 +13,20 @@ static uint8_t chars_y = 0;
 static const pixel_t WHITE = {0xff, 0xff, 0xff};
 static const pixel_t BLACK = {0x00, 0x00, 0x00};
 
-canvas_t screen_canvas = {};
+static canvas_t screen_canvas = {};
 static VGA_MODE vga_mode = VGA_MODE::TEXT;
 static color_scheme_t graphics_color_scheme = { 2, 1, 0, 3 }; // BGRA by default
 
-static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t *pixel) {
+static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
 	uint8_t *location = (uint8_t*) canvas.framebuffer_addr + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
 
 	if (canvas.bytes_per_pixel > 3) {
-		location[graphics_color_scheme.alpha_position] = pixel->alpha;
+		location[graphics_color_scheme.alpha_position] = pixel.alpha;
 	}
 
-	location[graphics_color_scheme.blue_position] = pixel->blue;
-	location[graphics_color_scheme.green_position] = pixel->green;
-	location[graphics_color_scheme.red_position] = pixel->red;
+	location[graphics_color_scheme.blue_position] = pixel.blue;
+	location[graphics_color_scheme.green_position] = pixel.green;
+	location[graphics_color_scheme.red_position] = pixel.red;
 }
 
 static void gpu_print_char(canvas_t canvas, char c) {
@@ -35,9 +36,9 @@ static void gpu_print_char(canvas_t canvas, char c) {
 		for(uint8_t height = 0; height < 8; height++) {
 		    uint8_t mask = 1 << width;
 		    if (bmp[height] & mask)
-				draw_pixel(canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, &WHITE);
+				draw_pixel(canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, WHITE);
 		    else
-				draw_pixel(canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, &BLACK);
+				draw_pixel(canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, BLACK);
 		}
 	}	
 
@@ -58,11 +59,13 @@ static void gpu_print_text(canvas_t canvas, const char *text) {
 
 static void text_mode_clear_screen(canvas_t canvas) {
 	uint8_t *video_memory = (uint8_t*) canvas.framebuffer_addr;
+
 	for (uint16_t i=0; i<canvas.width * canvas.height * 2; i+=2) {
 		video_memory[i] = ' ';
-		video_memory[i+1] = 0x07; 		
+		video_memory[i+1] = BLACK_WHITE_TEXT; 		
 	}
 }
+
 
 static void text_mode_print_text(canvas_t canvas, const char *text) {
 	uint8_t *video_memory = (uint8_t*) canvas.framebuffer_addr;
@@ -70,7 +73,7 @@ static void text_mode_print_text(canvas_t canvas, const char *text) {
 	for (uint32_t i=0; i<strlen(text); i++) {
 		uint16_t offset = chars_x * 2 + chars_y * canvas.bytes_per_line;
 		video_memory[offset] = text[i];
-		video_memory[offset+1] = 0x07;
+		video_memory[offset+1] = BLACK_WHITE_TEXT;
 		chars_x++;
 	}
 }
