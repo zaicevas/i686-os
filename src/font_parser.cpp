@@ -5,7 +5,10 @@
 
 #define RGB_DEPTH 24
 #define VIDEO_MEMORY_ADDR 0xB8000
-#define BLACK_WHITE_TEXT 0x7
+#define BLACK_WHITE_TEXT 0x7 // https://wiki.osdev.org/Text_UI
+
+#define BACKSPACE 0x08
+#define TAB 0x09
 
 static uint8_t chars_x = 0;
 static uint8_t chars_y = 0;
@@ -66,15 +69,39 @@ static void text_mode_clear_screen(canvas_t canvas) {
 	}
 }
 
-
-static void text_mode_print_text(canvas_t canvas, const char *text) {
+static void text_mode_print_char(canvas_t canvas, const char c) {
 	uint8_t *video_memory = (uint8_t*) canvas.framebuffer_addr;
-
-	for (uint32_t i=0; i<strlen(text); i++) {
-		uint16_t offset = chars_x * 2 + chars_y * canvas.bytes_per_line;
-		video_memory[offset] = text[i];
+	uint16_t offset = chars_x * 2 + chars_y * canvas.bytes_per_line;
+	
+    if (c == BACKSPACE) {
+        if (chars_x != 0) chars_x--;
+    }
+    else if (c == TAB) {
+        chars_x = (chars_x + 8) & ~(8 - 1);
+    }
+	else if (c == '\r') {
+        chars_x = 0;
+    }
+	else if (c == '\n') {
+		chars_x = 0;
+		chars_y++;
+	}	
+	else {
+		video_memory[offset] = c;
 		video_memory[offset+1] = BLACK_WHITE_TEXT;
 		chars_x++;
+	}
+
+	if (chars_x >= 80) {
+		chars_x = 0;
+		chars_y++;
+	}
+
+}
+
+static void text_mode_print_text(canvas_t canvas, const char *text) {
+	for (uint32_t i=0; i<strlen(text); i++) {
+		text_mode_print_char(canvas, text[i]);
 	}
 }
 

@@ -20,7 +20,7 @@ int kernel_main(uint64_t addr) {
 	else
 		qemu_printf("multiboot_framebuffer not found");
 
-	print_text("Hello, world!");
+	print_text("Hello, world!\nHello, second world!");
 
 	return 0;
 }

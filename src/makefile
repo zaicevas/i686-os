@@ -29,7 +29,7 @@ clean:
 	@rm -rf tmp
 
 run: ${ISO_KERNEL}
-	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -vga cirrus 
+	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -vga cirrus
 
 run_debug: ${ISO_KERNEL}
 	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -vga cirrus -gdb tcp::26000 -S
