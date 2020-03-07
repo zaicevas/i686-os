@@ -23,9 +23,8 @@ static color_scheme_t graphics_color_scheme = { 2, 1, 0, 3 }; // BGRA by default
 static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
 	uint8_t *location = (uint8_t*) canvas.framebuffer_addr + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
 
-	if (canvas.bytes_per_pixel > 3) {
+	if (canvas.bytes_per_pixel > 3)
 		location[graphics_color_scheme.alpha_position] = pixel.alpha;
-	}
 
 	location[graphics_color_scheme.blue_position] = pixel.blue;
 	location[graphics_color_scheme.green_position] = pixel.green;

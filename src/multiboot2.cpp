@@ -66,7 +66,7 @@ struct multiboot_header {
 
 void print_framebuffer_debug(multiboot_framebuffer *framebuffer) {
 	qemu_printf("framebuffer_bpp: ");
-	qemu_printf(itoa((uint64_t) framebuffer->framebuffer_bpp));
+	qemu_printf(itoa(framebuffer->framebuffer_bpp));
 	qemu_printf("\n");
 
 	qemu_printf("framebuffer_addr: ");
