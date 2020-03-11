@@ -32,8 +32,8 @@ struct __attribute__((aligned (8))) multiboot_header_tag_framebuffer {
 	const uint16_t type = MULTIBOOT_HEADER_TAG_FRAMEBUFFER;
 	const uint16_t flags = MULTIBOOT_HEADER_FLAGS_NOT_OPTIONAL;
 	const uint32_t size = MULTIBOOT_HEADER_TAG_FRAMEBUFFER_SIZE;
-	const uint32_t width = 1024;
-	const uint32_t height = 768;
+	const uint32_t width = 0;
+	const uint32_t height = 0;
 	const uint32_t depth = 32;
 };
 
@@ -117,6 +117,14 @@ multiboot_framebuffer* get_framebuffer(uint64_t addr) {
 			{
 				framebuffer = (multiboot_framebuffer*) tag;
 				print_framebuffer_debug(framebuffer);
+			}
+				break;
+			case 7:
+			{
+				multiboot_vbe *vbe = (multiboot_vbe*) tag;
+				qemu_printf("vbe mode: ");
+				qemu_printf(itoa(vbe->vbe_mode));
+				qemu_printf("\n");
 			}
 				break;
 		}

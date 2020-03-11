@@ -1,5 +1,5 @@
 FONT_PATH = assets
-FONT_NAME = zap-vga16
+FONT_NAME = Tamsyn8x16r
 FONT_EXT = psf
 
 CC = i686-elf-g++
@@ -15,8 +15,9 @@ ISO_KERNEL = kernel.iso
 
 CPP_FILES := ${wildcard *.cpp}
 ASM_FILES := ${wildcard *.asm}
-OBJ_FILES := ${patsubst %.cpp, ../bin/%.o, ${CPP_FILES}} \
-	${patsubst %.asm, ../bin/%.o, ${ASM_FILES}}
+OBJ_FILES := ${patsubst %.cpp, ${BIN_PATH}/%.o, ${CPP_FILES}} \
+	${patsubst %.asm, ${BIN_PATH}/%.o, ${ASM_FILES}} \
+	${BIN_PATH}/${FONT_NAME}.o
 
 .PHONY: all build clean run run_debug run_log_file check font 
 

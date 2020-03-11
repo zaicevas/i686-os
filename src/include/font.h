@@ -5,7 +5,7 @@
 #include <multiboot2.h>
 
 #define FONT_WIDTH 8
-#define FONT_HEIGHT 8
+#define FONT_HEIGHT 16
 #define ALPHA_BYTE_POSITION 3
 
 enum VGA_MODE { TEXT, GRAPHICS };

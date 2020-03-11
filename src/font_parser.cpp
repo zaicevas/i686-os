@@ -20,6 +20,12 @@ static canvas_t screen_canvas = {};
 static VGA_MODE vga_mode = VGA_MODE::TEXT;
 static color_scheme_t graphics_color_scheme = { 2, 1, 0, 3 }; // BGRA by default
 
+static uint16_t lookup[16] = { 0x0, 0x8, 0x4, 0xc, 0x2, 0xa, 0x6, 0xe, 0x1, 0x9, 0x5, 0xd, 0x3, 0xb, 0x7, 0xf, }; // to reverse order of .psf bits
+
+static uint8_t reverse(uint8_t n) {
+   return (lookup[n&0b1111] << 4) | lookup[n>>4];
+}
+
 static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
 	uint8_t *location = (uint8_t*) canvas.framebuffer_addr + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
 
@@ -34,13 +40,10 @@ static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pi
 static void gpu_print_char(canvas_t canvas, char c) {
 	const uint8_t *bmp = get_font(c);
 
-	for(uint8_t width = 0; width < 8; width++) {
-		for(uint8_t height = 0; height < 8; height++) {
+	for(uint8_t width = 0; width < FONT_WIDTH; width++) {
+		for(uint8_t height = 0; height < FONT_HEIGHT; height++) {
 		    uint8_t mask = 1 << width;
-		    if (bmp[height] & mask)
-				draw_pixel(canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, WHITE);
-		    else
-				draw_pixel(canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, BLACK);
+			draw_pixel(canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, reverse(bmp[height]) & mask ? WHITE : BLACK);
 		}
 	}	
 

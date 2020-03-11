@@ -4,6 +4,7 @@
 #include <multiboot2.h>
 #include <system.h>
 #include <keyboard.h>
+#include <string.h>
 
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
 	outb(0x3D4, 0x0A);
@@ -33,7 +34,12 @@ int kernel_main(uint64_t addr) {
 	else
 		qemu_printf("multiboot_framebuffer not found");
 
-	print_text("Hello, world!\nHello, second world!");
+	print_text("framebuffer_type: ");
+	print_text(itoa(framebuffer->framebuffer_type));
+	print_text(", framebuffer_width: ");
+	print_text(itoa(framebuffer->framebuffer_width));
+	print_text(", framebuffer_bpp: ");
+	print_text(itoa(framebuffer->framebuffer_bpp));
 
 	return 0;
 }
