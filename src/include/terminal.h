@@ -4,11 +4,12 @@
 #include <stdint.h>
 #include <multiboot2.h>
 
-#define FONT_WIDTH 8
-#define FONT_HEIGHT 16
+#define BACKSPACE 0x08
+#define TAB 0x0
+#define TAB_LENGTH 8
 
 namespace terminal { 
-	enum VGA_MODE { TEXT, GRAPHICS };
+	enum VGA_MODE { TEXT, GRAPHICS, UNKNOWN };
 
 	struct canvas_t {
 		uint32_t width;
@@ -26,6 +27,8 @@ namespace terminal {
 
 	void print_text(canvas_t *canvas, const char *text);
 	void print_text(const char *text);
+
+	VGA_MODE get_vga_mode();
 
 }
 

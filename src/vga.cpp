@@ -4,15 +4,12 @@
 #include <stdint.h>
 
 #define BLACK_WHITE_TEXT 0x7 
-#define BACKSPACE 0x08
-#define TAB 0x0
-#define TAB_LENGTH 8
 
 using namespace terminal;
 
 namespace vga {
 
-    void putc(const char c);
+    static void putc(const char c);
     void clear();
 
     void init() {
@@ -35,7 +32,7 @@ namespace vga {
         }
     }
 
-    void putc(const char c) {
+    static void putc(const char c) {
         uint8_t *video_memory = screen_canvas.framebuffer_addr;
         uint16_t offset = chars_x * 2 + chars_y * screen_canvas.bytes_per_line;
         

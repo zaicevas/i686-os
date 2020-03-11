@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <multiboot2.h>
 
+#define FONT_WIDTH 8
+#define FONT_HEIGHT 16
+
 namespace gpu {
 
 	struct pixel_t {

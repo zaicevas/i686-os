@@ -40,7 +40,7 @@ namespace gpu {
        ; 
     }
 
-    static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
+    inline static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
         uint8_t *location = (uint8_t*) canvas.framebuffer_addr + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
 
         if (canvas.bytes_per_pixel > 3)
@@ -93,7 +93,7 @@ namespace gpu {
 
     }
 
-    static color_scheme_t framebuffer_color_info_to_color_scheme(multiboot_framebuffer framebuffer) {
+    inline static color_scheme_t framebuffer_color_info_to_color_scheme(multiboot_framebuffer framebuffer) {
         multiboot_framebuffer_color_info color_info = framebuffer.color_info;
 
         return {

@@ -7,7 +7,7 @@
 
 namespace terminal {
 
-	static VGA_MODE vga_mode = VGA_MODE::TEXT;
+	static VGA_MODE vga_mode = VGA_MODE::UNKNOWN;
 
 	uint8_t chars_x = 0;
 	uint8_t chars_y = 0;
@@ -23,7 +23,7 @@ namespace terminal {
 				return VGA_MODE::TEXT;
 				break;
 			default:
-				return VGA_MODE::TEXT;
+				return VGA_MODE::UNKNOWN;
 		}
 	}
 
@@ -59,6 +59,10 @@ namespace terminal {
 		}
 		
 		print_text(screen_canvas, text);
+	}
+
+	VGA_MODE get_vga_mode() {
+		return vga_mode;
 	}
 
 }
