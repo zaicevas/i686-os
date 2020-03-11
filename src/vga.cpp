@@ -1,17 +1,23 @@
 #include <vga.h>
-#include <debug.h>
-#include <font.h>
+#include <terminal.h>
 #include <string.h>
+#include <stdint.h>
 
 #define BLACK_WHITE_TEXT 0x7 
 #define BACKSPACE 0x08
 #define TAB 0x0
 #define TAB_LENGTH 8
 
+using namespace terminal;
 
 namespace vga {
 
     void putc(const char c);
+    void clear();
+
+    void init() {
+        clear();
+    }
 
     void clear() {
         uint8_t *video_memory = screen_canvas.framebuffer_addr;

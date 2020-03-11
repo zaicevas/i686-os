@@ -1,5 +1,4 @@
-#include <font.h>
-#include <debug.h>
+#include <terminal.h>
 #include <string.h>
 
 #define PSF_FONT_MAGIC 0x864ab572
@@ -17,8 +16,11 @@ struct PSF_font_t {
     uint32_t width;         /* width in pixels */
 };
 
+namespace gpu {
 
-uint8_t *get_font(char c) {
-	PSF_font_t *font = (PSF_font_t *) &_binary_assets_Tamsyn8x16r_psf_start;	
-	return (uint8_t *) font + font->headersize + c * font->bytes_per_glyph;
+    uint8_t *get_font(char c) {
+        PSF_font_t *font = (PSF_font_t *) &_binary_assets_Tamsyn8x16r_psf_start;	
+        return (uint8_t *) font + font->headersize + c * font->bytes_per_glyph;
+    }
+
 }

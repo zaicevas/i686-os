@@ -1,10 +1,12 @@
 #include <stdint.h>
-#include <font.h>
+#include <terminal.h>
 #include <debug.h>
 #include <multiboot2.h>
 #include <system.h>
 #include <keyboard.h>
 #include <string.h>
+
+using namespace terminal;
 
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
 	outb(0x3D4, 0x0A);
@@ -30,7 +32,7 @@ int kernel_main(uint64_t addr) {
 	move_cursor(2, 0);
 
 	if (framebuffer)
-		init_vga_mode(*framebuffer);
+		terminal::init(*framebuffer);
 	else
 		qemu_printf("multiboot_framebuffer not found");
 
