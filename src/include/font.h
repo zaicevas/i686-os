@@ -6,7 +6,9 @@
 
 #define FONT_WIDTH 8
 #define FONT_HEIGHT 16
-#define ALPHA_BYTE_POSITION 3
+
+extern uint8_t chars_x;
+extern uint8_t chars_y;
 
 enum VGA_MODE { TEXT, GRAPHICS };
 
@@ -31,6 +33,8 @@ struct canvas_t {
 	uint32_t bytes_per_line;
 	uint8_t *framebuffer_addr = nullptr;
 };
+
+extern canvas_t screen_canvas;
 
 uint8_t *get_font(char c);
 

@@ -2,29 +2,21 @@
 #include <stdint.h>
 #include <string.h>
 #include <debug.h>
+#include <vga.h>
 
 #define RGB_DEPTH 24
-#define VIDEO_MEMORY_ADDR 0xB8000
-#define BLACK_WHITE_TEXT 0x7 // https://wiki.osdev.org/Text_UI
 
-#define BACKSPACE 0x08
-#define TAB 0x09
+static const pixel_t WHITE = { 0xff, 0xff, 0xff };
+static const pixel_t BLACK = { 0x00, 0x00, 0x00 };
+static const pixel_t GRAY = { 190, 190, 190 };
 
-static uint8_t chars_x = 0;
-static uint8_t chars_y = 0;
-
-static const pixel_t WHITE = {0xff, 0xff, 0xff};
-static const pixel_t BLACK = {0x00, 0x00, 0x00};
-
-static canvas_t screen_canvas = {};
 static VGA_MODE vga_mode = VGA_MODE::TEXT;
 static color_scheme_t graphics_color_scheme = { 2, 1, 0, 3 }; // BGRA by default
 
-static uint16_t lookup[16] = { 0x0, 0x8, 0x4, 0xc, 0x2, 0xa, 0x6, 0xe, 0x1, 0x9, 0x5, 0xd, 0x3, 0xb, 0x7, 0xf, }; // to reverse order of .psf bits
+uint8_t chars_x = 0;
+uint8_t chars_y = 0;
 
-static uint8_t reverse(uint8_t n) {
-   return (lookup[n&0b1111] << 4) | lookup[n>>4];
-}
+canvas_t screen_canvas = {};
 
 static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
 	uint8_t *location = (uint8_t*) canvas.framebuffer_addr + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
@@ -40,10 +32,10 @@ static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pi
 static void gpu_print_char(canvas_t canvas, char c) {
 	const uint8_t *bmp = get_font(c);
 
-	for(uint8_t width = 0; width < FONT_WIDTH; width++) {
-		for(uint8_t height = 0; height < FONT_HEIGHT; height++) {
-		    uint8_t mask = 1 << width;
-			draw_pixel(canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, reverse(bmp[height]) & mask ? WHITE : BLACK);
+	for (uint8_t width = 0; width < FONT_WIDTH; width++) {
+		for (uint8_t height = 0; height < FONT_HEIGHT; height++) {
+		    uint8_t mask = 1 << (7 - width); // start with the most significant bit
+			draw_pixel(canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, bmp[height] & mask ? GRAY: BLACK);
 		}
 	}	
 
@@ -60,51 +52,6 @@ static void gpu_print_char(canvas_t canvas, char c) {
 static void gpu_print_text(canvas_t canvas, const char *text) {
 	for (uint32_t i=0; i<strlen(text); i++)
 		gpu_print_char(canvas, text[i]);
-}
-
-static void text_mode_clear_screen(canvas_t canvas) {
-	uint8_t *video_memory = (uint8_t*) canvas.framebuffer_addr;
-
-	for (uint16_t i=0; i<canvas.width * canvas.height * 2; i+=2) {
-		video_memory[i] = ' ';
-		video_memory[i+1] = BLACK_WHITE_TEXT; 		
-	}
-}
-
-static void text_mode_print_char(canvas_t canvas, const char c) {
-	uint8_t *video_memory = (uint8_t*) canvas.framebuffer_addr;
-	uint16_t offset = chars_x * 2 + chars_y * canvas.bytes_per_line;
-	
-    if (c == BACKSPACE) {
-        if (chars_x != 0) chars_x--;
-    }
-    else if (c == TAB) {
-        chars_x = (chars_x + 8) & ~(8 - 1);
-    }
-	else if (c == '\r') {
-        chars_x = 0;
-    }
-	else if (c == '\n') {
-		chars_x = 0;
-		chars_y++;
-	}	
-	else {
-		video_memory[offset] = c;
-		video_memory[offset+1] = BLACK_WHITE_TEXT;
-		chars_x++;
-	}
-
-	if (chars_x >= canvas.width) {
-		chars_x = 0;
-		chars_y++;
-	}
-
-}
-
-static void text_mode_print_text(canvas_t canvas, const char *text) {
-	for (uint32_t i=0; i<strlen(text); i++) {
-		text_mode_print_char(canvas, text[i]);
-	}
 }
 
 static VGA_MODE framebuffer_type_to_VGA_MODE(uint8_t framebuffer_type) {
@@ -163,18 +110,19 @@ void init_vga_mode(multiboot_framebuffer framebuffer) {
 		(uint8_t*) framebuffer.framebuffer_addr
 	};
 
-	graphics_color_scheme = framebuffer_color_info_to_color_scheme(framebuffer);
 	vga_mode = framebuffer_type_to_VGA_MODE(framebuffer.framebuffer_type);
 
 	if (vga_mode == VGA_MODE::TEXT)
-		text_mode_clear_screen(screen_canvas);
+		vga::clear();
+	else
+		graphics_color_scheme = framebuffer_color_info_to_color_scheme(framebuffer);
 }
 
 void print_text(canvas_t canvas, const char *text) {
 	if (vga_mode == VGA_MODE::GRAPHICS)
 		gpu_print_text(canvas, text);
 	else if (vga_mode == VGA_MODE::TEXT)
-		text_mode_print_text(canvas, text);
+		vga::printf(text);
 }
 
 void print_text(const char *text) {
