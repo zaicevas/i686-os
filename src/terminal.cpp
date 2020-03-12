@@ -51,7 +51,7 @@ namespace terminal {
 		if (vga_mode == VGA_MODE::GRAPHICS)
 			gpu::kprintf(s, args);
 		else if (vga_mode == VGA_MODE::TEXT)
-			vga::printf(s);
+			vga::kprint(s);
 
         va_end(args);
 	}

@@ -26,9 +26,9 @@ namespace vga {
         }
     }
 
-    void printf(const char *text) {
-        for (uint32_t i=0; i<strlen(text); i++) {
-            kputc(text[i]);
+    void kprint(const char *s) {
+        for (uint32_t i=0; i<strlen(s); i++) {
+            kputc(s[i]);
         }
     }
 

@@ -5,7 +5,7 @@ namespace vga {
 
 	void init();
 	void clear();
-	void printf(const char *text);
+	void kprint(const char *s);
 
 }
 

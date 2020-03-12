@@ -5,6 +5,7 @@
 #include <system.h>
 #include <keyboard.h>
 #include <string.h>
+#include <system.h>
 
 using namespace terminal;
 
@@ -35,7 +36,6 @@ void kernel_main(uint64_t addr) {
 	}
 
 	canvas_t screen = terminal::get_screen_canvas();
-
 	kprintf("Graphics initialized: %d x %d x %d", screen.width, screen.height, screen.bytes_per_pixel * 8);
-
+	halt();
 }

@@ -25,7 +25,7 @@ namespace terminal {
 	extern canvas_t screen_canvas;
 
 	void init(multiboot_framebuffer framebuffer);
-	void kprintf(const char *s, ...);
+	void kprintf(const char *s, ...) __attribute__ ((format (printf, 1, 2)));
 
 	VGA_MODE get_vga_mode();
 	canvas_t get_screen_canvas();
