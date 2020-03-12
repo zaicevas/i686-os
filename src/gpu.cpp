@@ -89,11 +89,13 @@ namespace gpu {
         }
     }
 
-
     void kputc(char c) {
         if (c == BACKSPACE) {
-            if (chars_x != 0) 
+            if (chars_x != 0) {
                 chars_x--;
+                kputc(' ');
+                chars_x--;
+            }
         }
         else if (c == TAB) {
             chars_x = (chars_x + TAB_LENGTH) & ~(TAB_LENGTH - 1);
@@ -127,7 +129,7 @@ namespace gpu {
 
     }
 
-    static void kputstr(char *s) {
+    inline static void kputstr(char *s) {
         for (uint32_t i=0; i<strlen(s); i++)
             kputc(s[i]);
     }

@@ -6,6 +6,8 @@
 #include <keyboard.h>
 #include <string.h>
 #include <system.h>
+#include <interrupt.h>
+#include <keyboard.h>
 
 using namespace terminal;
 
@@ -36,6 +38,14 @@ void kernel_main(uint64_t addr) {
 	}
 
 	canvas_t screen = terminal::get_screen_canvas();
-	kprintf("Graphics initialized: %d x %d x %d", screen.width, screen.height, screen.bytes_per_pixel * 8);
+	kprintf("Graphics initialized: %d x %d x %d\n", screen.width, screen.height, screen.bytes_per_pixel * 8);
+
+	interrupt::init();
+	kprintf("Interrupts initialized\n");
+
+	keyboard::init();
+	kprintf("Keyboard initialized\n");
+
 	halt();
+
 }

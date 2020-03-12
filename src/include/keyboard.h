@@ -3,5 +3,8 @@
 
 #include <stdint.h>
 
+namespace keyboard {
+	void init();
+}
 
 #endif

@@ -14,22 +14,28 @@
 /* Check if bit n in flags is set */
 #define check_flag(flags, n) ((flags) & bit(n))
 
-uint8_t *memcpy(uint8_t *dest, const uint8_t *src, uint64_t count) {
-    	return nullptr;
+void *memcpy(uint8_t *dest, const uint8_t *src, uint64_t n) {
+    uint8_t *p = dest;
+    while (n--)
+        *dest++ = *src++;
+    return p;
 }
 
-uint8_t *memset(uint8_t *dest, uint8_t val, uint64_t count) {
-    	return nullptr;
+void *memset(uint8_t *dest, uint8_t val, uint64_t n) {
+    uint8_t *p = dest;
+	while (n--)
+		*dest++ = val;
+	return p;
 }
 
-uint16_t *memsetw(uint16_t *dest, uint16_t val, uint64_t count) {
+void *memsetw(uint16_t *dest, uint16_t val, uint64_t n) {
     	return nullptr;
 }
 
 uint16_t inb(uint16_t port) {
 	uint16_t val;
 	asm volatile ("inb %0, %1" : : "Nd"(port), "a"(val) );
-    	return val;
+	return val;
 }
 
 void outb(uint16_t port, uint8_t val) {
@@ -38,7 +44,6 @@ void outb(uint16_t port, uint8_t val) {
 
 void halt() {
 	loop:
-		asm volatile ("cli"); // disable all interrupts
 		asm volatile ("hlt");
 		goto loop;
 }
