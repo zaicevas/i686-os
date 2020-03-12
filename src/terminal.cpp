@@ -44,25 +44,24 @@ namespace terminal {
 			gpu::init(framebuffer);
 	}
 
-	void print_text(canvas_t canvas, const char *text) {
-		if (vga_mode == VGA_MODE::GRAPHICS)
-			gpu::printf(text);
-		else if (vga_mode == VGA_MODE::TEXT)
-			vga::printf(text);
-	}
+	void kprintf(const char *s, ...) {
+		va_list args;
+        va_start(args, s);
 
-	void print_text(const char *text) {
-		if (screen_canvas.framebuffer_addr == nullptr) {
-			qemu_printf("ERROR: print_text(const char *text) was called with screen_canvas uninitialized");
-			qemu_printf("\n");
-			return;
-		}
-		
-		print_text(screen_canvas, text);
+		if (vga_mode == VGA_MODE::GRAPHICS)
+			gpu::kprintf(s, args);
+		else if (vga_mode == VGA_MODE::TEXT)
+			vga::printf(s);
+
+        va_end(args);
 	}
 
 	VGA_MODE get_vga_mode() {
 		return vga_mode;
+	}
+
+	canvas_t get_screen_canvas() {
+		return screen_canvas;
 	}
 
 }

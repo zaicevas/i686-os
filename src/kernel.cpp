@@ -27,15 +27,15 @@ void kernel_main(uint64_t addr) {
 		return;
 	}
 
-	if (terminal::get_vga_mode() != VGA_MODE::GRAPHICS) {
-		print_text("Only graphics mode is supported by the OS.");
+	VGA_MODE vga_mode = terminal::get_vga_mode();
+
+	if (vga_mode != VGA_MODE::GRAPHICS) {
+		kprintf("Only graphics mode is supported by the OS.");
 		return;
 	}
 
-	print_text("framebuffer_type: ");
-	print_text(itoa(framebuffer->framebuffer_type));
-	print_text(", framebuffer_width: ");
-	print_text(itoa(framebuffer->framebuffer_width));
-	print_text(", framebuffer_height: ");
-	print_text(itoa(framebuffer->framebuffer_height));
+	canvas_t screen = terminal::get_screen_canvas();
+
+	kprintf("Graphics initialized: %d x %d x %d", screen.width, screen.height, screen.bytes_per_pixel * 8);
+
 }

@@ -9,7 +9,7 @@ using namespace terminal;
 
 namespace vga {
 
-    static void putc(const char c);
+    static void kputc(const char c);
     void clear();
 
     void init() {
@@ -28,16 +28,17 @@ namespace vga {
 
     void printf(const char *text) {
         for (uint32_t i=0; i<strlen(text); i++) {
-            putc(text[i]);
+            kputc(text[i]);
         }
     }
 
-    static void putc(const char c) {
+    static void kputc(const char c) {
         uint8_t *video_memory = screen_canvas.framebuffer_addr;
         uint16_t offset = chars_x * 2 + chars_y * screen_canvas.bytes_per_line;
         
         if (c == BACKSPACE) {
-            if (chars_x != 0) chars_x--;
+            if (chars_x != 0) 
+                chars_x--;
         }
         else if (c == TAB) {
             chars_x = (chars_x + TAB_LENGTH) & ~(TAB_LENGTH - 1);

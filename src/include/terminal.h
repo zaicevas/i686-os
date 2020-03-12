@@ -3,9 +3,10 @@
 
 #include <stdint.h>
 #include <multiboot2.h>
+#include <stdarg.h>
 
-#define BACKSPACE 0x08
-#define TAB 0x0
+#define BACKSPACE 8
+#define TAB 9
 #define TAB_LENGTH 8
 
 namespace terminal { 
@@ -24,11 +25,10 @@ namespace terminal {
 	extern canvas_t screen_canvas;
 
 	void init(multiboot_framebuffer framebuffer);
-
-	void print_text(canvas_t *canvas, const char *text);
-	void print_text(const char *text);
+	void kprintf(const char *s, ...);
 
 	VGA_MODE get_vga_mode();
+	canvas_t get_screen_canvas();
 
 }
 

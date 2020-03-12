@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <multiboot2.h>
+#include <stdarg.h>
 
 #define FONT_WIDTH 8
 #define FONT_HEIGHT 16
@@ -19,7 +20,8 @@ namespace gpu {
     uint8_t *get_font(char c);
 
     void init(multiboot_framebuffer framebuffer);
-	void printf(const char *text);
+	void kprintf(const char *s, va_list args); 
+    void kputc(char c);
 	void clear();
 
 }
