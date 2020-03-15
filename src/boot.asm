@@ -2,27 +2,32 @@ bits 32
 
 section .text
 
-global start, gdt_flush
-
-extern kernel_main, gdtr
-
-gdt_flush:
-    lgdt [gdtr]       ; Load the GDT with our '_gdtr' which is a special pointer
-    mov ax, 0x08      ; 0x10 is the offset in the GDT to our data segment
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
-    jmp 0x10:flush2   ; 0x08 is the offset to our code segment: Far jump!
-flush2:
-    ret               ; Returns back to the C code!
+global start, gdt_flush, idt_load
+extern kernel_main, gdtr, idtp
 
 start:
 	mov esp, stack_top
 
 	push ebx			; multiboot2 information data structure
 	call kernel_main
+
+
+gdt_flush:
+    lgdt [gdtr]
+    mov ax, 0x10      
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    jmp 0x08:flush2   
+flush2:
+    ret               
+
+idt_load:
+    lidt [idtp]
+    ret
+
 
 section .bss
 align 16

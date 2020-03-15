@@ -1,5 +1,5 @@
 FONT_PATH = assets
-FONT_NAME = Tamsyn8x16r
+FONT_NAME = Tamsyn10x20r
 FONT_EXT = psf
 
 CC = i686-elf-g++

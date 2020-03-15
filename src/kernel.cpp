@@ -54,18 +54,16 @@ void gdt_set_gate(int num, unsigned long base, unsigned long limit, unsigned cha
 
 void gdt_install() {
     /* Setup the GDT pointer and limit */
-    gdtr.limit = (sizeof(gdt_entry) * 4) - 1;
+    gdtr.limit = (sizeof(gdt_entry) * 3) - 1;
     gdtr.base = (uint32_t) &gdt;
 
     /* Our NULL descriptor */
     gdt_set_gate(0, 0, 0, 0, 0);
 
-    // DS, selector 0x08
-    gdt_set_gate(1, 0, 0xFFFFFFFF, 0x92, 0xCF);
+    gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); // CS
+    gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // DS
 
-    // CS, selector 0x10
-    gdt_set_gate(2, 0, 0xFFFFFFFF, 0x9A, 0xCF);
-    gdt_set_gate(3, 0, 0xFFFFFFFF, 0x89, 0xCF);
+    //gdt_set_gate(3, 0, 0xFFFFFFFF, 0x89, 0xCF);
 
     gdt_flush();
 }
@@ -100,7 +98,7 @@ void kernel_main(uint64_t addr) {
 	kprintf("Graphics initialized: %d x %d x %d\n", screen.width, screen.height, screen.bytes_per_pixel * 8);
 
 	gdt_install();
-	//kprintf("GDT initialized\n");
+	kprintf("GDT initialized\n");
 
 	interrupt::init();
 	kprintf("IDT initialized\n");

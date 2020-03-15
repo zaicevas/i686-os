@@ -8,7 +8,7 @@
 #define KEYBOARD_STATUS_PORT 0x64
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8E
-#define KERNEL_CODE_SEGMENT_OFFSET 0x10
+#define KERNEL_CODE_SEGMENT_OFFSET 0x08
 
 #define ENTER_KEY_CODE 0x1C
 
@@ -63,6 +63,17 @@ namespace interrupt {
 		asm volatile ( "lidt %0" : : "m"(IDTR) );
 	}
 
+	void kbd_ack(void){
+		while(!(inb(0x60)==0xfa));
+	}
+
+
+	void kbd_led_handling(uint8_t ledstatus){;
+		outb(0x60,0xed);
+		kbd_ack();
+		outb(0x60, ledstatus);
+	}
+
 	struct interrupt_frame;
  
 	__attribute__((interrupt)) void keyboard_interrupt_handler(interrupt_frame *frame) {
@@ -72,11 +83,14 @@ namespace interrupt {
 		if (status & 0x01) {
 			uint8_t key = inb(KEYBOARD_DATA_PORT);
 
-			qemu_printf(itoa(key));
-			qemu_printf("\n");
+			if (key == 0x3A) {
+				terminal::kprintf("caps lock pressed\n");
+				kbd_led_handling(0b00000100);
+			}
 
 			if ((key < 0 || key >= 54) && key != 57)
 				return;
+
 			terminal::kprintf("%c", keyboard_map[(unsigned char) key]);
 		}
 	}

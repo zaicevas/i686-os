@@ -1,6 +1,7 @@
 #include <gpu.h>
 #include <terminal.h>
 #include <string.h>
+#include <debug.h>
 
 #define RGB_DEPTH 24
 
@@ -110,12 +111,22 @@ namespace gpu {
         else {
             const uint8_t *bmp = get_font(c);
 
+		for (uint8_t height = 0; height < FONT_HEIGHT; height++) {
+			for (uint8_t width = 0; width < FONT_WIDTH; width++) {	
+				uint8_t mask = 1 << 7 - (width % 8);
+				draw_pixel(screen_canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, bmp[height * 2 + width / 8] & mask ? GRAY : BLACK);
+			}
+		}
+		/*	
+
             for (uint8_t width = 0; width < FONT_WIDTH; width++) {
                 for (uint8_t height = 0; height < FONT_HEIGHT; height++) {
-                    uint8_t mask = 1 << (7 - width); // start with the most significant bit
-                    draw_pixel(screen_canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, bmp[height] & mask ? GRAY: BLACK);
+			uint8_t mask = 1 << 7 - (width % 8);
+                    //uint8_t mask = 1 << ((FONT_WIDTH - 1) - width); // start with the most significant bit
+                    draw_pixel(screen_canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, bmp[height] & mask ? GRAY : BLACK);
                 }
-            }	
+            }
+*/
 
             chars_x++;
         }
@@ -135,7 +146,7 @@ namespace gpu {
     }
 
     inline static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
-        uint8_t *location = (uint8_t*) canvas.framebuffer_addr + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
+        uint8_t *location = (uint8_t *) canvas.framebuffer_addr + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
 
         if (canvas.bytes_per_pixel > 3)
             location[color_scheme.alpha_position] = pixel.alpha;

@@ -1,9 +1,10 @@
 #include <terminal.h>
 #include <string.h>
+#include <debug.h>
 
 #define PSF_FONT_MAGIC 0x864ab572
 
-extern char _binary_assets_Tamsyn8x16r_psf_start;
+extern char _binary_assets_Tamsyn10x20r_psf_start;
 
 struct PSF_font_t {
     uint32_t magic;         /* magic bytes to identify PSF */
@@ -19,7 +20,7 @@ struct PSF_font_t {
 namespace gpu {
 
     uint8_t *get_font(char c) {
-        PSF_font_t *font = (PSF_font_t *) &_binary_assets_Tamsyn8x16r_psf_start;	
+        PSF_font_t *font = (PSF_font_t *) &_binary_assets_Tamsyn10x20r_psf_start;	
         return (uint8_t *) font + font->headersize + c * font->bytes_per_glyph;
     }
 
