@@ -62,7 +62,6 @@ void reboot() {
     } while (check_flag(temp, KBRD_BIT_UDATA) != 0);
  
     outb(KBRD_INTRFC, KBRD_RESET); /* pulse CPU reset line */
-loop:
-    asm volatile ("hlt"); /* if that didn't work, halt the CPU */
-    goto loop; /* if a NMI is received, halt again */
+
+    halt();
 }

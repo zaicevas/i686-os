@@ -51,16 +51,12 @@ uint8_t keyboard_map[128] = {
 		0,	/* All other keys are undefined */
 };
 
-extern "C" {
-	extern void keyboard_handler(void);
-}
-
 namespace interrupt {
 
-	void load_lidt(void* base, uint16_t size) { 
+	void load_lidt(void *base, uint16_t size) { 
 	    struct {
-		uint16_t length;
-		void*    base;
+			uint16_t length;
+			void *base;
 	    } __attribute__((packed)) IDTR = { size, base };
 	 
 		asm volatile ("sti");

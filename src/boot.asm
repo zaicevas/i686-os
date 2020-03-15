@@ -2,15 +2,21 @@ bits 32
 
 section .text
 
-;global start, keyboard_handler
-global start
+global start, gdt_flush
 
-extern kernel_main
-;extern keyboard_handler_main
+extern kernel_main, gdtr
 
-;keyboard_handler:                 
-;	call keyboard_handler_main
-;	iretd
+gdt_flush:
+    lgdt [gdtr]       ; Load the GDT with our '_gdtr' which is a special pointer
+    mov ax, 0x08      ; 0x10 is the offset in the GDT to our data segment
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    jmp 0x10:flush2   ; 0x08 is the offset to our code segment: Far jump!
+flush2:
+    ret               ; Returns back to the C code!
 
 start:
 	mov esp, stack_top
