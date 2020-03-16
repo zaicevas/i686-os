@@ -63,7 +63,7 @@ void gdt_install() {
     gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); // CS
     gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // DS
 
-    //gdt_set_gate(3, 0, 0xFFFFFFFF, 0x89, 0xCF);
+    gdt_set_gate(3, 0, 0xFFFFFFFF, 0x89, 0xCF);
 
     gdt_flush();
 }

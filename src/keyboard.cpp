@@ -29,10 +29,6 @@ namespace keyboard {
 		}
 	}
 
-	inline static void set_configuration_byte() {
-
-	}
-
 	// https://wiki.osdev.org/%228042%22_PS/2_Controller#Initialising_the_PS.2F2_Controller
 	void init() {
 		disable_ps2();

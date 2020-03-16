@@ -63,7 +63,7 @@ namespace interrupt {
 		asm volatile ( "lidt %0" : : "m"(IDTR) );
 	}
 
-	void kbd_ack(void){
+	void kbd_ack() {
 		while(!(inb(0x60)==0xfa));
 	}
 
@@ -75,6 +75,8 @@ namespace interrupt {
 	}
 
 	struct interrupt_frame;
+
+	bool caps_lock_led = false;
  
 	__attribute__((interrupt)) void keyboard_interrupt_handler(interrupt_frame *frame) {
 		outb(0x20, 0x20);
@@ -84,8 +86,7 @@ namespace interrupt {
 			uint8_t key = inb(KEYBOARD_DATA_PORT);
 
 			if (key == 0x3A) {
-				terminal::kprintf("caps lock pressed\n");
-				kbd_led_handling(0b00000100);
+				kbd_led_handling(caps_lock_led ? 0b00000100 : 0);
 			}
 
 			if ((key < 0 || key >= 54) && key != 57)
@@ -110,11 +111,6 @@ namespace interrupt {
 
 		/* populate IDT entry of keyboard's interrupt */
 		keyboard_address = (unsigned long) keyboard_interrupt_handler;
-		IDT[0x21].offset_lowerbits = keyboard_address & 0xffff;
-		IDT[0x21].selector = KERNEL_CODE_SEGMENT_OFFSET;
-		IDT[0x21].zero = 0;
-		IDT[0x21].type_attr = INTERRUPT_GATE;
-		IDT[0x21].offset_higherbits = (keyboard_address & 0xffff0000) >> 16;
 
 		/*     Ports
 		*	 PIC1	PIC2
@@ -151,6 +147,12 @@ namespace interrupt {
 		const uint16_t size = (sizeof (struct IDT_entry) * IDT_SIZE) + (((uint32_t) IDT & 0xffff) << 16);
 		
 		load_lidt((void *) IDT, size);
+
+		IDT[0x21].offset_lowerbits = keyboard_address & 0xffff;
+		IDT[0x21].selector = KERNEL_CODE_SEGMENT_OFFSET;
+		IDT[0x21].zero = 0;
+		IDT[0x21].type_attr = INTERRUPT_GATE;
+		IDT[0x21].offset_higherbits = (keyboard_address & 0xffff0000) >> 16;
 	}
 
 }
