@@ -6,7 +6,7 @@
 #include <keyboard.h>
 #include <string.h>
 #include <system.h>
-#include <interrupt.h>
+#include <idt.h>
 #include <keyboard.h>
 
 using namespace terminal;
@@ -100,7 +100,7 @@ void kernel_main(uint64_t addr) {
 	gdt_install();
 	kprintf("GDT initialized\n");
 
-	interrupt::init();
+	idt::init();
 	kprintf("IDT initialized\n");
 
 	keyboard::init();

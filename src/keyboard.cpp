@@ -1,5 +1,8 @@
 #include <stdint.h>
 #include <system.h>
+#include <terminal.h>
+#include <idt.h>
+#include <keyboard.h>
 
 #define PS2_COMMAND 0x64
 #define PS2_DISABLE_FIRST_PORT 0xAD
@@ -9,9 +12,44 @@
 #define PS2_OUTPUT_FULL 0x1
 #define PS2_DATA 0x60
 
+#define KEYBOARD_DATA_PORT 0x60
+#define KEYBOARD_STATUS_PORT 0x64
+
 #define ENABLE_IRQ1 0b11111101
 
 namespace keyboard {
+
+	void kbd_ack() {
+		while(!(inb(0x60)==0xfa));
+	}
+
+	void kbd_led_handling(uint8_t ledstatus){;
+		outb(0x60,0xed);
+		kbd_ack();
+		outb(0x60, ledstatus);
+	}
+
+	struct interrupt_frame;
+
+	bool caps_lock_led = false;
+ 
+	__attribute__((interrupt)) void keyboard_interrupt_handler(interrupt_frame *frame) {
+		outb(0x20, 0x20);
+		const uint8_t status = inb(KEYBOARD_STATUS_PORT);
+		
+		if (status & 0x01) {
+			uint8_t key = inb(KEYBOARD_DATA_PORT);
+
+			if (key == 0x3A) {
+				kbd_led_handling(caps_lock_led ? 0b00000100 : 0);
+			}
+
+			if ((key < 0 || key >= 54) && key != 57)
+				return;
+
+			terminal::kprintf("%c", keyboard_map[key]);
+		}
+	}
 
 	inline static void disable_ps2() {
 		outb(PS2_COMMAND, PS2_DISABLE_FIRST_PORT);
@@ -36,6 +74,8 @@ namespace keyboard {
 		flush_output_buffer();
 
 		enable_ps2();
+
+		idt::set_gate(0x21, (uint32_t) &keyboard_interrupt_handler);
 
 		outb(0x21 , ENABLE_IRQ1);
 	}

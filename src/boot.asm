@@ -2,15 +2,14 @@ bits 32
 
 section .text
 
-global start, gdt_flush, idt_load
-extern kernel_main, gdtr, idtp
+global start, gdt_flush
+extern kernel_main, gdtr
 
 start:
 	mov esp, stack_top
 
-	push ebx			; multiboot2 information data structure
+	push ebx			; pass multiboot2 data to kernel_main
 	call kernel_main
-
 
 gdt_flush:
     lgdt [gdtr]
@@ -23,11 +22,6 @@ gdt_flush:
     jmp 0x08:flush2   
 flush2:
     ret               
-
-idt_load:
-    lidt [idtp]
-    ret
-
 
 section .bss
 align 16
