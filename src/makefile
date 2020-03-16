@@ -34,7 +34,7 @@ run: ${ISO_KERNEL}
 	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio 
 
 run_debug: ${ISO_KERNEL}
-	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -vga cirrus -gdb tcp::26000 -S
+	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -gdb tcp::26000 -S
 
 run_log_file:
 	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial file:debug.log

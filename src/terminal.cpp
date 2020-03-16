@@ -53,7 +53,7 @@ namespace terminal {
 		else if (vga_mode == VGA_MODE::TEXT)
 			vga::kprint(s);
 
-        va_end(args);
+		va_end(args);
 	}
 
 	VGA_MODE get_vga_mode() {
