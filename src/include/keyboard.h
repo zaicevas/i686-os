@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-#define KEYBOARD_SCANCODES 128
+#define BACKSPACE_ASCII 8
 
 namespace keyboard {
 	void init();
-	extern uint8_t keyboard_map[KEYBOARD_SCANCODES];
+	uint8_t keyboard_to_ascii(uint8_t key);
 }
 
 #endif

@@ -18,26 +18,30 @@
 #define KEYBOARD_STATUS_PORT 0x64
 
 #define CAPS_LOCK 0x3A
+#define ENABLE_CAPS_LOCK 0b00000100
+#define LED_SEND(byte) outb(0x60, byte);
 
 #define ENABLE_IRQ1 0b11111101
 
 namespace keyboard {
 
-	static void kbd_ack() {
+	static void ack() {
 		while (!(inb(0x60)==0xFA));
 	}
 
-	static void kbd_led_handling(uint8_t ledstatus) {
+	static void handle_led(uint8_t ledstatus) {
 		outb(0x60, 0xED);
 
-		kbd_ack();
+		ack();
 
-		outb(0x60, ledstatus);
+		LED_SEND(ledstatus)
+		//outb(0x60, ledstatus);
 	}
 
-	struct interrupt_frame;
 
-	bool caps_lock_led = false;
+	static bool caps_lock_led = false;
+
+	struct interrupt_frame;
 
 	__attribute__((interrupt)) void keyboard_interrupt_handler(interrupt_frame *frame) {
 		outb(0x20, 0x20);
@@ -49,14 +53,13 @@ namespace keyboard {
 
 			if (key == CAPS_LOCK) {
 				caps_lock_led = !caps_lock_led;
-				kbd_led_handling(caps_lock_led ? 0b00000100 : 0);
+				handle_led(caps_lock_led ? ENABLE_CAPS_LOCK : 0);
 				return;
 			}
 
-			if ((key < 0 || key >= 54) && key != 57)
-				return;
+			if (keyboard_to_ascii(key) != 0)
+				terminal::kprintf("%c", keyboard_to_ascii(key));
 
-			terminal::kprintf("%c", keyboard_map[key]);
 		}
 	}
 
