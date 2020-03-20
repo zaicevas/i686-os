@@ -9,6 +9,7 @@
 #include <idt.h>
 #include <keyboard.h>
 #include <gdt.h>
+#include <pic.h>
 
 using namespace terminal;
 
@@ -45,8 +46,11 @@ void kmain(uint64_t addr) {
 	idt::init();
 	kprintf("IDT initialized\n");
 
+	pic::init();
+	kprintf("PIC initialized\n");
+
 	keyboard::init();
-	kprintf("Keyboard initialized\n");
+	kprintf("PS/2 Keyboard initialized\n");
 
 	halt();
 

@@ -1,10 +1,10 @@
 #include <stdint.h>
 #include <system.h>
 #include <terminal.h>
-#include <idt.h>
 #include <keyboard.h>
 #include <string.h>
 #include <debug.h>
+#include <pic.h>
 
 #define PS2_COMMAND 0x64
 #define PS2_DATA 0x60
@@ -42,7 +42,7 @@ namespace keyboard {
 
 		enable_ps2();
 
-		idt::set_gate(0x21, (uint32_t) &keyboard_interrupt_handler);
+		pic::set_gate(0x21, (uint32_t) &keyboard_interrupt_handler);
 
 		outb(0x21 , ENABLE_IRQ1);
 	}
