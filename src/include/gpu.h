@@ -17,11 +17,11 @@ namespace gpu {
 		uint8_t alpha;
 	};
 
-    	uint8_t *get_font(char c);
+	uint8_t *get_font(char c);
 
-    	void init(multiboot_framebuffer framebuffer);
+	void init(multiboot_framebuffer framebuffer);
 	void kprintf(const char *s, va_list args); 
-    	void kputc(char c);
+	void kputc(char c);
 	void clear();
 
 }
