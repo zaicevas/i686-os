@@ -24,11 +24,13 @@
 
 namespace keyboard {
 
-	static bool caps_lock_led = false;
+	static bool caps_lock = false;
 	struct interrupt_frame;
 
+	static void putc(uint8_t key);
+	static char to_capital_letter(char c); 
 	static void ack();
-	static void handle_led(uint8_t ledstatus);
+	static void switch_caps_lock_led();
 	static void disable_ps2();
 	static void enable_ps2();
 	static void flush_output_buffer();
@@ -56,27 +58,40 @@ namespace keyboard {
 			uint8_t key = inb(KEYBOARD_DATA_PORT);
 
 			if (key == CAPS_LOCK) {
-				caps_lock_led = !caps_lock_led;
-				handle_led(caps_lock_led ? ENABLE_CAPS_LOCK : 0);
+				switch_caps_lock_led();
 				return;
 			}
 
 			if (keyboard_to_ascii(key) != 0)
-				terminal::kprintf("%c", keyboard_to_ascii(key));
+				putc(key);
 
 		}
 	}
 
-	static void ack() {
+	inline static void putc(uint8_t key) {
+		char ascii = keyboard_to_ascii(key);
+		bool is_letter = ascii >= 'a' && key <= 'z';
+		char c = is_letter && caps_lock ? to_capital_letter(ascii) : ascii;
+
+		terminal::kprintf("%c", c);
+	}
+
+	inline static char to_capital_letter(char c) {
+		return c - ('a' - 'A');
+	}
+
+	inline static void ack() {
 		while (!(inb(0x60)==0xFA));
 	}
 
-	static void handle_led(uint8_t ledstatus) {
+	inline static void switch_caps_lock_led() {
+		caps_lock = !caps_lock;
+
+		uint8_t led = caps_lock ? ENABLE_CAPS_LOCK : 0;
+
 		outb(0x60, 0xED);
-
 		ack();
-
-		outb(PS2_DATA, ledstatus);
+		outb(PS2_DATA, led);
 	}
 
 
