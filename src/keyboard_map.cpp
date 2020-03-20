@@ -1,6 +1,7 @@
 #include <keyboard.h>
 
 namespace keyboard {
+
 	static char *qwertzuiop = "qwertyuiop[]"; 
 	static char *asdfghjkl = "asdfghjkl;'";
 	static char *yxcvbnm = "zxcvbnm";

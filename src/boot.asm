@@ -2,26 +2,14 @@ bits 32
 
 section .text
 
-global start, gdt_flush
-extern kernel_main, gdtr
+global start
+extern kmain, gdtr
 
 start:
 	mov esp, stack_top
 
-	push ebx			; pass multiboot2 data to kernel_main
-	call kernel_main
-
-gdt_flush:
-    lgdt [gdtr]
-    mov ax, 0x10      
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
-    jmp 0x08:flush2   
-flush2:
-    ret               
+	push ebx			; pass multiboot2 data as a parameter 
+	call kmain
 
 section .bss
 align 16
