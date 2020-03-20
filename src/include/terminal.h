@@ -5,8 +5,6 @@
 #include <multiboot2.h>
 #include <stdarg.h>
 
-#define BACKSPACE 8
-#define TAB 9
 #define TAB_LENGTH 8
 
 namespace terminal { 

@@ -91,14 +91,14 @@ namespace gpu {
     }
 
     void kputc(char c) {
-        if (c == BACKSPACE) {
+        if (c == '\b') {
             if (chars_x != 0) {
                 chars_x--;
                 kputc(' ');
                 chars_x--;
             }
         }
-        else if (c == TAB) {
+        else if (c == '\t') {
             chars_x = (chars_x + TAB_LENGTH) & ~(TAB_LENGTH - 1);
         }
         else if (c == '\r') {

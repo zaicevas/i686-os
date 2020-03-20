@@ -36,11 +36,11 @@ namespace vga {
         uint8_t *video_memory = screen_canvas.framebuffer_addr;
         uint16_t offset = chars_x * 2 + chars_y * screen_canvas.bytes_per_line;
         
-        if (c == BACKSPACE) {
+        if (c == '\b') {
             if (chars_x != 0) 
                 chars_x--;
         }
-        else if (c == TAB) {
+        else if (c == '\t') {
             chars_x = (chars_x + TAB_LENGTH) & ~(TAB_LENGTH - 1);
         }
         else if (c == '\r') {

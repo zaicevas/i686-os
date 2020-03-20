@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-uint32_t strlen(const char* s);
+uint32_t strlen(const char *s);
 
-char* itoa(uint64_t val);
+char *itoa(uint64_t val);
 
 #endif

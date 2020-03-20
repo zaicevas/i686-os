@@ -25,10 +25,12 @@
 namespace keyboard {
 
 	static bool caps_lock = false;
+	static bool is_shift_pressed = false;
 	struct interrupt_frame;
 
 	static void putc(uint8_t key);
 	static char to_capital_letter(char c); 
+	static char with_shift(char c); 
 	static void ack();
 	static void switch_caps_lock_led();
 	static void disable_ps2();
@@ -57,8 +59,12 @@ namespace keyboard {
 		if (status & 0x01) {
 			uint8_t key = inb(KEYBOARD_DATA_PORT);
 
-			if (key == CAPS_LOCK) {
+			if (key == KEYCODE::CAPS_LOCK_PRESSED) {
 				switch_caps_lock_led();
+				return;
+			}
+			else if (key == KEYCODE::LEFT_SHIFT_PRESSED || key == KEYCODE::LEFT_SHIFT_RELEASED) {
+				is_shift_pressed = key == KEYCODE::LEFT_SHIFT_PRESSED;
 				return;
 			}
 
@@ -71,9 +77,30 @@ namespace keyboard {
 	inline static void putc(uint8_t key) {
 		char ascii = keyboard_to_ascii(key);
 		bool is_letter = ascii >= 'a' && key <= 'z';
-		char c = is_letter && caps_lock ? to_capital_letter(ascii) : ascii;
+
+		char c = ascii;
+
+		if (is_letter && (caps_lock || is_shift_pressed))
+			c = to_capital_letter(ascii);
+		else if (is_shift_pressed)
+			c = with_shift(ascii);
 
 		terminal::kprintf("%c", c);
+	}
+
+	inline static char with_shift(char c) {
+		if (c == '/') return '?';
+		else if (c == '.') return '>';
+		else if (c == ',') return '<';
+		else if (c == ']') return '}';
+		else if (c == '[') return '{';
+		else if (c == '\\') return '|';
+		else if (c == '\'') return '"';
+		else if (c == ';') return ':';
+		else if (c >= '0' && c <= '9') return ")!@#$%^&*("[c - '0'];
+		else if (c == '`') return '~';
+		else if (c == '-') return '-';
+		else if (c == '=') return '+';
 	}
 
 	inline static char to_capital_letter(char c) {
