@@ -101,6 +101,7 @@ namespace keyboard {
 		else if (c == '`') return '~';
 		else if (c == '-') return '-';
 		else if (c == '=') return '+';
+		else return c;
 	}
 
 	inline static char to_capital_letter(char c) {
