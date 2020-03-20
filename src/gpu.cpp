@@ -111,22 +111,13 @@ namespace gpu {
         else {
             const uint8_t *bmp = get_font(c);
 
-		for (uint8_t height = 0; height < FONT_HEIGHT; height++) {
-			for (uint8_t width = 0; width < FONT_WIDTH; width++) {	
-				uint8_t mask = 1 << 7 - (width % 8);
-				draw_pixel(screen_canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, bmp[height * 2 + width / 8] & mask ? GRAY : BLACK);
-			}
-		}
-		/*	
-
-            for (uint8_t width = 0; width < FONT_WIDTH; width++) {
-                for (uint8_t height = 0; height < FONT_HEIGHT; height++) {
-			uint8_t mask = 1 << 7 - (width % 8);
-                    //uint8_t mask = 1 << ((FONT_WIDTH - 1) - width); // start with the most significant bit
-                    draw_pixel(screen_canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, bmp[height] & mask ? GRAY : BLACK);
+            for (uint8_t height = 0; height < FONT_HEIGHT; height++) {
+                for (uint8_t width = 0; width < FONT_WIDTH; width++) {	
+                    uint8_t mask = 1 << 7 - (width % 8);    // start with the most significant bit
+                    pixel_t pixel = bmp[height * ((FONT_WIDTH + 7) / 8) + width / 8] & mask ? GRAY : BLACK;
+                    draw_pixel(screen_canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, pixel);
                 }
             }
-*/
 
             chars_x++;
         }
