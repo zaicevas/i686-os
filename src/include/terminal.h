@@ -18,8 +18,8 @@ namespace terminal {
 		uint8_t *framebuffer_addr = nullptr;
 	};
 
-	extern uint8_t chars_x;
-	extern uint8_t chars_y;
+	extern uint16_t chars_x;
+	extern uint16_t chars_y;
 	extern canvas_t screen_canvas;
 
 	void init(multiboot_framebuffer framebuffer);

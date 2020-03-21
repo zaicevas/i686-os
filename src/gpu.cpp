@@ -33,6 +33,7 @@ namespace gpu {
     static const pixel_t GRAY = { 190, 190, 190 };
 
     static color_scheme_t color_scheme = { 2, 1, 0, 3 }; // BGRA by default
+    static uint16_t chars_per_line = 0;
 
     void init(multiboot_framebuffer framebuffer) {
         color_scheme = framebuffer_color_info_to_color_scheme(framebuffer);
@@ -122,7 +123,7 @@ namespace gpu {
             chars_x++;
         }
 
-        uint32_t chars_per_line = screen_canvas.bytes_per_line / (screen_canvas.bytes_per_pixel * 8);
+        uint32_t chars_per_line = screen_canvas.bytes_per_line / (screen_canvas.bytes_per_pixel * FONT_WIDTH);
 
         if (chars_x >= chars_per_line) {
             chars_x = 0;

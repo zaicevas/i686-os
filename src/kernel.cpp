@@ -10,6 +10,7 @@
 #include <keyboard.h>
 #include <gdt.h>
 #include <pic.h>
+#include <timer.h>
 
 using namespace terminal;
 
@@ -52,6 +53,8 @@ void kmain(uint64_t addr) {
 	keyboard::init();
 	kprintf("PS/2 Keyboard IDT entry initialized\n");
 	kprintf("PS/2 Keyboard interrupt unmasked\n");
+
+	timer::init();
 
 	halt();
 
