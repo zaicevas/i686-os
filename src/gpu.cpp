@@ -211,8 +211,7 @@ namespace gpu {
     }
 
     static void kputhex(uint32_t i) {
-        int j;
-        for(j = 28; j >= 0; j = j - 4) {
+        for(int j = 28; j >= 0; j = j - 4) {
             kputhexdigit((i >> j) & 0x0f);
         }
     }

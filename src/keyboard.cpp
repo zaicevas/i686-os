@@ -16,11 +16,10 @@
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
+#define KEYBOARD_IRQ 1
 
 #define CAPS_LOCK 0x3A
 #define ENABLE_CAPS_LOCK 0b00000100
-
-#define ENABLE_IRQ1 0b11111101
 
 namespace keyboard {
 
@@ -47,8 +46,7 @@ namespace keyboard {
 		enable_ps2();
 
 		pic::set_gate(0x21, (uint32_t) &keyboard_interrupt_handler);
-
-		outb(0x21 , ENABLE_IRQ1);
+		pic::unmask(KEYBOARD_IRQ);
 	}
 
 	__attribute__((interrupt)) void keyboard_interrupt_handler(interrupt_frame *frame) {
@@ -99,7 +97,7 @@ namespace keyboard {
 		else if (c == ';') return ':';
 		else if (c >= '0' && c <= '9') return ")!@#$%^&*("[c - '0'];
 		else if (c == '`') return '~';
-		else if (c == '-') return '-';
+		else if (c == '-') return '_';
 		else if (c == '=') return '+';
 		else return c;
 	}
