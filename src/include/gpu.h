@@ -5,9 +5,6 @@
 #include <multiboot2.h>
 #include <stdarg.h>
 
-#define FONT_WIDTH 10
-#define FONT_HEIGHT 20
-
 namespace gpu {
 
 	struct pixel_t {
@@ -16,8 +13,6 @@ namespace gpu {
 		uint8_t blue;
 		uint8_t alpha;
 	};
-
-	uint8_t *get_font(char c);
 
 	void init(multiboot_framebuffer framebuffer);
 	void kprintf(const char *s, va_list args); 

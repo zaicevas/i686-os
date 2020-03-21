@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define HZ_FREQUENCY 100
+
 namespace timer {
     void init();
 }
