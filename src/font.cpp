@@ -22,12 +22,12 @@ namespace font {
         return (uint8_t *) font + font->headersize + c * font->bytes_per_glyph;
     }
 
-    uint8_t get_font_width() {
+    uint8_t get_width() {
         PSF_font_t *font = (PSF_font_t *) &_binary_assets_Tamsyn10x20r_psf_start;	
         return font->width;
     }
 
-    uint8_t get_font_height() {
+    uint8_t get_height() {
         PSF_font_t *font = (PSF_font_t *) &_binary_assets_Tamsyn10x20r_psf_start;	
         return font->height;
     }

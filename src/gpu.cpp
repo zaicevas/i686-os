@@ -39,8 +39,8 @@ namespace gpu {
 
     void init(multiboot_framebuffer framebuffer) {
         color_scheme = framebuffer_color_info_to_color_scheme(framebuffer);
-        font_width = font::get_font_width();
-        font_height = font::get_font_height();
+        font_width = font::get_width();
+        font_height = font::get_height();
     }
 
     void clear() {
@@ -135,6 +135,14 @@ namespace gpu {
         if (terminal::get_chars_x() >= chars_per_line) {
             terminal::set_chars_x(0);
             terminal::set_chars_y(chars_y + 1);
+        }
+
+        uint32_t lines_per_screen = terminal::get_screen_canvas().height / font::get_height();
+
+        if (terminal::get_chars_y() >= lines_per_screen) {
+            qemu_printf("should scroll down");
+            // todo: scroll down
+            terminal::set_chars_y(0);
         }
 
     }

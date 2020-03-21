@@ -51,10 +51,11 @@ void kmain(uint64_t addr) {
 	kprintf("PIC initialized\n");
 
 	keyboard::init();
-	kprintf("PS/2 Keyboard IDT entry initialized\n");
-	kprintf("PS/2 Keyboard interrupt unmasked\n");
+	kprintf("PS/2 Keyboard initialized\n");
 
 	timer::init();
+	kprintf("PIT ticks initialized\n");
+
 
 	halt();
 

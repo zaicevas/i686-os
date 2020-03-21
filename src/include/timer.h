@@ -3,10 +3,11 @@
 
 #include <stdint.h>
 
-#define HZ_FREQUENCY 100
+#define TIMER_HZ_FREQUENCY 100
 
 namespace timer {
     void init();
+    uint64_t get_ticks();
 }
 
 #endif

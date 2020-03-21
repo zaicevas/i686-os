@@ -25,7 +25,6 @@ namespace keyboard {
 
 	static bool caps_lock = false;
 	static bool is_shift_pressed = false;
-	struct interrupt_frame;
 
 	static void putc(uint8_t key);
 	static char to_capital_letter(char c); 
@@ -35,7 +34,7 @@ namespace keyboard {
 	static void disable_ps2();
 	static void enable_ps2();
 	static void flush_output_buffer();
-	void keyboard_interrupt_handler(interrupt_frame *frame); 
+	void keyboard_interrupt_handler(struct interrupt_frame *frame); 
 
 	// https://wiki.osdev.org/%228042%22_PS/2_Controller#Initialising_the_PS.2F2_Controller
 	void init() {
@@ -49,7 +48,7 @@ namespace keyboard {
 		pic::unmask(KEYBOARD_IRQ);
 	}
 
-	__attribute__((interrupt)) void keyboard_interrupt_handler(interrupt_frame *frame) {
+	__attribute__((interrupt)) void keyboard_interrupt_handler(struct interrupt_frame *frame) {
 		outb(0x20, 0x20);
 
 		const uint8_t status = inb(KEYBOARD_STATUS_PORT);

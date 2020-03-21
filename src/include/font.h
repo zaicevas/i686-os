@@ -5,8 +5,8 @@
 
 namespace font {
 	uint8_t *get_bitmap(char c);
-	uint8_t get_font_width(); 
-	uint8_t get_font_height(); 
+	uint8_t get_width(); 
+	uint8_t get_height(); 
 }
 
 #endif
