@@ -9,6 +9,7 @@
 
 namespace terminal { 
 	enum VGA_MODE { TEXT, GRAPHICS, UNKNOWN };
+	VGA_MODE get_vga_mode();
 
 	struct canvas_t {
 		uint32_t width;
@@ -18,15 +19,20 @@ namespace terminal {
 		uint8_t *framebuffer_addr = nullptr;
 	};
 
-	extern uint16_t chars_x;
-	extern uint16_t chars_y;
-	extern canvas_t screen_canvas;
-
 	void init(multiboot_framebuffer framebuffer);
 	void kprintf(const char *s, ...) __attribute__ ((format (printf, 1, 2)));
 
-	VGA_MODE get_vga_mode();
+	static uint16_t chars_x = 0;
+	static uint16_t chars_y = 0;
+	static canvas_t screen_canvas = {};
+
 	canvas_t get_screen_canvas();
+
+	void set_chars_x(uint16_t chars_x);
+	void set_chars_y(uint16_t chars_y);
+
+	uint16_t get_chars_x();
+	uint16_t get_chars_y();
 
 }
 

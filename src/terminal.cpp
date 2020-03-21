@@ -9,11 +9,6 @@ namespace terminal {
 
 	static VGA_MODE vga_mode = VGA_MODE::UNKNOWN;
 
-	uint16_t chars_x = 0;
-	uint16_t chars_y = 0;
-
-	canvas_t screen_canvas = {};
-
 	static VGA_MODE framebuffer_type_to_VGA_MODE(uint8_t framebuffer_type) {
 		switch (framebuffer_type) {
 			case MULTIBOOT_FRAMEBUFFER_TYPE_RGB:
@@ -46,7 +41,7 @@ namespace terminal {
 
 	void kprintf(const char *s, ...) {
 		va_list args;
-        va_start(args, s);
+		va_start(args, s);
 
 		if (vga_mode == VGA_MODE::GRAPHICS)
 			gpu::kprintf(s, args);
@@ -62,6 +57,21 @@ namespace terminal {
 
 	canvas_t get_screen_canvas() {
 		return screen_canvas;
+	}
+
+	void set_chars_x(uint16_t chars_x) {
+		terminal::chars_x = chars_x;
+	}
+
+	void set_chars_y(uint16_t chars_y) {
+		terminal::chars_y = chars_y;
+	}
+
+	uint16_t get_chars_x() {
+		return chars_x;
+	}
+	uint16_t get_chars_y() {
+		return chars_y;
 	}
 
 }

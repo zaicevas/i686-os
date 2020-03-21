@@ -5,8 +5,6 @@
 
 #define RGB_DEPTH 24
 
-using namespace terminal;
-
 namespace gpu {
 
     struct color_scheme_t {
@@ -24,7 +22,7 @@ namespace gpu {
     static void kputhexdigit(uint8_t i);
     static void kputhex(uint32_t i);
 
-    static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel);
+    static void draw_pixel(terminal::canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel);
     static uint8_t get_alpha_byte_position(multiboot_framebuffer_color_info color_info);
     static color_scheme_t framebuffer_color_info_to_color_scheme(multiboot_framebuffer framebuffer);
 
@@ -92,22 +90,25 @@ namespace gpu {
     }
 
     void kputc(char c) {
+        const uint16_t chars_x = terminal::get_chars_x();
+        const uint16_t chars_y = terminal::get_chars_y();
+
         if (c == '\b') {
             if (chars_x != 0) {
-                chars_x--;
+                terminal::set_chars_x(chars_x - 1);
                 kputc(' ');
-                chars_x--;
+                terminal::set_chars_x(chars_x - 2);
             }
         }
         else if (c == '\t') {
-            chars_x = (chars_x + TAB_LENGTH) & ~(TAB_LENGTH - 1);
+            terminal::set_chars_x((chars_x + TAB_LENGTH) & ~(TAB_LENGTH - 1));
         }
         else if (c == '\r') {
-            chars_x = 0;
+            terminal::set_chars_x(0);
         }
         else if (c == '\n') {
-            chars_x = 0;
-            chars_y++;
+            terminal::set_chars_x(0);
+            terminal::set_chars_y(chars_y + 1);
         }	
         else {
             const uint8_t *bmp = get_font(c);
@@ -116,18 +117,18 @@ namespace gpu {
                 for (uint8_t width = 0; width < FONT_WIDTH; width++) {	
                     uint8_t mask = 1 << 7 - (width % 8);    // start with the most significant bit
                     pixel_t pixel = bmp[height * ((FONT_WIDTH + 7) / 8) + width / 8] & mask ? GRAY : BLACK;
-                    draw_pixel(screen_canvas, chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, pixel);
+                    draw_pixel(terminal::get_screen_canvas(), chars_x * FONT_WIDTH + width, chars_y * FONT_HEIGHT + height, pixel);
                 }
             }
 
-            chars_x++;
+            terminal::set_chars_x(chars_x + 1);
         }
 
-        uint32_t chars_per_line = screen_canvas.bytes_per_line / (screen_canvas.bytes_per_pixel * FONT_WIDTH);
+        uint32_t chars_per_line = terminal::get_screen_canvas().bytes_per_line / (terminal::get_screen_canvas().bytes_per_pixel * FONT_WIDTH);
 
         if (chars_x >= chars_per_line) {
-            chars_x = 0;
-            chars_y++;
+            terminal::set_chars_x(0);
+            terminal::set_chars_y(chars_y + 1);
         }
 
     }
@@ -137,7 +138,7 @@ namespace gpu {
             kputc(s[i]);
     }
 
-    inline static void draw_pixel(canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
+    inline static void draw_pixel(terminal::canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
         uint8_t *location = (uint8_t *) canvas.framebuffer_addr + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
 
         if (canvas.bytes_per_pixel > 3)
