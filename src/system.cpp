@@ -1,4 +1,5 @@
 #include <system.h>
+#include <debug.h>
 
 #define KBRD_INTRFC 0x64
  
@@ -14,10 +15,13 @@
 /* Check if bit n in flags is set */
 #define check_flag(flags, n) ((flags) & bit(n))
 
-void *memcpy(uint8_t *dest, const uint8_t *src, uint64_t n) {
+void *memcpy(uint8_t *dest, uint8_t *src, uint64_t n) {
     uint8_t *p = dest;
-    while (n--)
+
+    while (n--) {
         *dest++ = *src++;
+    }
+
     return p;
 }
 
@@ -29,7 +33,10 @@ void *memset(uint8_t *dest, uint8_t val, uint64_t n) {
 }
 
 void *memsetw(uint16_t *dest, uint16_t val, uint64_t n) {
-    return nullptr;
+    uint16_t *p = dest;
+	while (n--)
+		*dest++ = val;
+	return p;
 }
 
 uint8_t inb(uint16_t port) {

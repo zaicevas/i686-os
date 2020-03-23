@@ -3,6 +3,7 @@
 #include <string.h>
 #include <debug.h>
 #include <font.h>
+#include <system.h>
 
 #define RGB_DEPTH 24
 
@@ -25,6 +26,8 @@ namespace gpu {
 
     static void draw_pixel(terminal::canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel);
     static uint8_t get_alpha_byte_position(multiboot_framebuffer_color_info color_info);
+    static void scroll_down();
+    static void clear_line(uint8_t y);
     static color_scheme_t framebuffer_color_info_to_color_scheme(multiboot_framebuffer framebuffer);
 
     static const pixel_t WHITE = { 0xff, 0xff, 0xff };
@@ -32,15 +35,19 @@ namespace gpu {
     static const pixel_t GRAY = { 190, 190, 190 };
 
     static color_scheme_t color_scheme = { 2, 1, 0, 3 }; // BGRA by default
-    static uint16_t chars_per_line = 0;
 
     static uint8_t font_width;
     static uint8_t font_height;
+
+    uint32_t lines_per_screen;
+    uint32_t chars_per_line;
 
     void init(multiboot_framebuffer framebuffer) {
         color_scheme = framebuffer_color_info_to_color_scheme(framebuffer);
         font_width = font::get_width();
         font_height = font::get_height();
+        lines_per_screen = terminal::get_screen_canvas().height / font::get_height();
+        chars_per_line = terminal::get_screen_canvas().bytes_per_line / (terminal::get_screen_canvas().bytes_per_pixel * font_width);
     }
 
     void clear() {
@@ -113,7 +120,8 @@ namespace gpu {
             terminal::set_chars_x(0);
         }
         else if (c == '\n') {
-            terminal::set_chars_y(chars_y + 1);
+            if (chars_y < lines_per_screen)
+                terminal::set_chars_y(chars_y + 1);
             terminal::set_chars_x(0);
         }	
         else {
@@ -130,19 +138,18 @@ namespace gpu {
             terminal::set_chars_x(chars_x + 1);
         }
 
-        uint32_t chars_per_line = terminal::get_screen_canvas().bytes_per_line / (terminal::get_screen_canvas().bytes_per_pixel * font_width);
+        // qemu_printf("chars_y = ");
+        // qemu_printf(itoa(terminal::get_chars_y()));
+        // qemu_printf("\n");
 
         if (terminal::get_chars_x() >= chars_per_line) {
             terminal::set_chars_x(0);
             terminal::set_chars_y(chars_y + 1);
         }
 
-        uint32_t lines_per_screen = terminal::get_screen_canvas().height / font::get_height();
-
         if (terminal::get_chars_y() >= lines_per_screen) {
-            qemu_printf("should scroll down");
-            // todo: scroll down
-            terminal::set_chars_y(0);
+            qemu_printf("time to scroll!");
+            scroll_down();
         }
 
     }
@@ -183,6 +190,29 @@ namespace gpu {
                 return positions[i] / 8;
         }
 
+    }
+
+    static void scroll_down() {
+        /* could be optimized by saving each line's last symbol position and
+            checking for redundant coppies (empty lines, same letters)
+        */
+
+        uint8_t *framebuffer = terminal::get_screen_canvas().framebuffer_addr;
+        uint32_t bytes_per_line = terminal::get_screen_canvas().bytes_per_line;
+
+        memcpy(framebuffer, framebuffer + bytes_per_line * font_height, bytes_per_line * (lines_per_screen - 1) * font_height);
+
+        clear_line(lines_per_screen - 1);
+
+        terminal::set_chars_y(lines_per_screen - 1);
+    }
+
+    static void clear_line(uint8_t y) {
+        for (uint16_t height = 0; height < font_height; height++) {
+            for (uint16_t width = 0; width < terminal::get_screen_canvas().width; width++) {
+                draw_pixel(terminal::get_screen_canvas(), width, y * font_height + height, BLACK);
+            }
+        }
     }
 
     inline static color_scheme_t framebuffer_color_info_to_color_scheme(multiboot_framebuffer framebuffer) {
