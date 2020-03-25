@@ -1,6 +1,7 @@
-
 #ifndef PIC_H
 #define PIC_H
+
+#define END_OF_INTERRUPT outb(0x20, 0x20);
 
 #include <stdint.h>
 

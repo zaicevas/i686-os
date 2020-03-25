@@ -50,31 +50,30 @@ namespace keyboard {
 	}
 
 	__attribute__((interrupt)) void keyboard_interrupt_handler(struct interrupt_frame *frame) {
-		outb(0x20, 0x20);
-
 		const uint8_t status = inb(KEYBOARD_STATUS_PORT);
 		
 		if (status & 0x01) {
 			uint8_t key = inb(KEYBOARD_DATA_PORT);
-			terminal::kprintf("key: %x\n", key);
 
 			if (key == KEYCODE::CAPS_LOCK_PRESSED && caps_lock_released) {
 				caps_lock_released = false;
 				caps_lock_led = !caps_lock_led;
 				switch_caps_lock_led();
-				return;
 			}
-			else if (key == KEYCODE::CAPS_LOCK_RELEASED)
+			else if (key == KEYCODE::CAPS_LOCK_RELEASED) {
 				caps_lock_released = true;
+			}
 			else if (key == KEYCODE::LEFT_SHIFT_PRESSED || key == KEYCODE::LEFT_SHIFT_RELEASED) {
 				is_shift_pressed = key == KEYCODE::LEFT_SHIFT_PRESSED;
-				return;
 			}
 
-			if (keyboard_to_ascii(key) != 0)
+			else if (keyboard_to_ascii(key) != 0) {
 				putc(key);
+			}
 
 		}
+
+		END_OF_INTERRUPT	
 	}
 
 	inline static void putc(uint8_t key) {
