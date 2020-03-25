@@ -71,6 +71,14 @@ void cpuid(uint16_t code, uint32_t *a, uint32_t *d) {
     asm volatile ( "cpuid" : "=a"(*a), "=d"(*d) : "0"(code) : "ebx", "ecx" );
 }
 
+void cpuGetMSR(uint32_t msr, uint32_t *lo, uint32_t *hi) {
+   asm volatile("rdmsr" : "=a"(*lo), "=d"(*hi) : "c"(msr));
+}
+ 
+void cpuSetMSR(uint32_t msr, uint32_t lo, uint32_t hi) {
+   asm volatile("wrmsr" : : "a"(lo), "d"(hi), "c"(msr));
+}
+
 void halt() {
 	loop:
 		asm volatile ("hlt");

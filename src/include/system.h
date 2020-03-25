@@ -21,6 +21,10 @@ bool are_interrupts_enabled();
 
 void cpuid(uint16_t code, uint32_t *a, uint32_t *d);
 
+void cpuGetMSR(uint32_t msr, uint32_t *lo, uint32_t *hi);
+ 
+void cpuSetMSR(uint32_t msr, uint32_t lo, uint32_t hi);
+
 void halt();
 
 void reboot();
