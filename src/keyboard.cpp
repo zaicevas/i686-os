@@ -57,6 +57,7 @@ namespace keyboard {
 			uint8_t key = inb(KEYBOARD_DATA_PORT);
 
 			if (key == KEYCODE::CAPS_LOCK_PRESSED) {
+				caps_lock = !caps_lock;
 				switch_caps_lock_led();
 				return;
 			}
@@ -110,12 +111,12 @@ namespace keyboard {
 	}
 
 	inline static void switch_caps_lock_led() {
-		caps_lock = !caps_lock;
-
 		uint8_t led = caps_lock ? ENABLE_CAPS_LOCK : 0;
 
 		outb(0x60, 0xED);
+
 		ack();
+
 		outb(PS2_DATA, led);
 	}
 
