@@ -13,6 +13,7 @@
 #define PS2_ENABLE_FIRST_PORT 0xAE
 #define PS2_ENABLE_SECOND_PORT 0xA8
 #define PS2_OUTPUT_FULL 0x1
+#define PS2_EMPTY_BUFFER 0
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -106,16 +107,18 @@ namespace keyboard {
 		return c - ('a' - 'A');
 	}
 
-	inline static void ack() {
-		while (!(inb(0x60)==0xFA));
+	inline static void wait_for_empty_buffer() {
+		while ((inb(PS2_COMMAND) & 2) != PS2_EMPTY_BUFFER) {}
 	}
 
 	inline static void switch_caps_lock_led() {
 		uint8_t led = caps_lock_led ? ENABLE_CAPS_LOCK : 0;
 
+		wait_for_empty_buffer();
+
 		outb(PS2_DATA, 0xED);
 
-		ack();
+		wait_for_empty_buffer();
 
 		outb(PS2_DATA, led);
 	}
