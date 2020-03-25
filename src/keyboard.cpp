@@ -60,16 +60,12 @@ namespace keyboard {
 				caps_lock_led = !caps_lock_led;
 				switch_caps_lock_led();
 			}
-			else if (key == KEYCODE::CAPS_LOCK_RELEASED) {
+			else if (key == KEYCODE::CAPS_LOCK_RELEASED) 
 				caps_lock_released = true;
-			}
-			else if (key == KEYCODE::LEFT_SHIFT_PRESSED || key == KEYCODE::LEFT_SHIFT_RELEASED) {
-				is_shift_pressed = key == KEYCODE::LEFT_SHIFT_PRESSED;
-			}
-
-			else if (keyboard_to_ascii(key) != 0) {
+			else if (key == KEYCODE::LEFT_SHIFT_PRESSED || key == KEYCODE::RIGHT_SHIFT_PRESSED || key == KEYCODE::LEFT_SHIFT_RELEASED || key == KEYCODE::RIGHT_SHIFT_RELEASED)
+				is_shift_pressed = key == KEYCODE::LEFT_SHIFT_PRESSED || key == KEYCODE::RIGHT_SHIFT_PRESSED;
+			else if (keyboard_to_ascii(key) != 0) 
 				putc(key);
-			}
 
 		}
 
