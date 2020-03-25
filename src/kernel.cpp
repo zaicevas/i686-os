@@ -20,14 +20,6 @@ using namespace terminal;
 	#error "This code must be compiled with an x86-elf compiler"
 #endif
 
-const uint32_t CPUID_FLAG_MSR = 1 << 5;
- 
-bool cpuHasMSR() {
-   uint32_t a, d; // eax, edx
-   cpuid(1, &a, &d);
-   return d & CPUID_FLAG_MSR;
-}
-
 extern "C"
 void kmain(uint64_t addr) {
 	multiboot_framebuffer *framebuffer = get_framebuffer(addr);
