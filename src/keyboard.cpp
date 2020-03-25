@@ -31,7 +31,7 @@ namespace keyboard {
 	static void putc(uint8_t key);
 	static char to_capital_letter(char c); 
 	static char with_shift(char c); 
-	static void ack();
+	static void wait_for_empty_buffer(); 
 	static void switch_caps_lock_led();
 	static void disable_ps2();
 	static void enable_ps2();
