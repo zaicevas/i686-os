@@ -45,9 +45,9 @@ uint8_t inb(uint16_t port) {
 	return val;
 }
 
-uint16_t in(uint16_t port) {
+uint16_t inw(uint16_t port) {
     uint16_t val;
-	asm volatile ("in %0, %1" : : "a"(val), "Nd"(port));
+	asm volatile ("inw %0, %1" : : "a"(val), "Nd"(port));
     return val;
 }
 
@@ -55,8 +55,20 @@ void outb(uint16_t port, uint8_t val) {
 	asm volatile ("outb %0, %1" : : "Nd"(port), "a"(val));
 }
 
-void out(uint16_t port, uint16_t val) {
-	asm volatile ("out %0, %1" : : "Nd"(port), "a"(val));
+void outw(uint16_t port, uint16_t val) {
+	asm volatile ("outw %0, %1" : : "Nd"(port), "a"(val));
+}
+
+bool are_interrupts_enabled() {
+    uint32_t flags;
+    asm volatile ( "pushf\n\t"
+                   "pop %0"
+                   : "=g"(flags) );
+    return flags & (1 << 9);
+}
+
+void cpuid(uint16_t code, uint32_t *a, uint32_t *d) {
+    asm volatile ( "cpuid" : "=a"(*a), "=d"(*d) : "0"(code) : "ebx", "ecx" );
 }
 
 void halt() {

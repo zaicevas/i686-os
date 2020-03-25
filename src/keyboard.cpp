@@ -113,7 +113,7 @@ namespace keyboard {
 	inline static void switch_caps_lock_led() {
 		uint8_t led = caps_lock_led ? ENABLE_CAPS_LOCK : 0;
 
-		outb(0x60, 0xED);
+		outb(PS2_DATA, 0xED);
 
 		ack();
 
