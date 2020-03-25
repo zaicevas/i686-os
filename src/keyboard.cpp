@@ -23,7 +23,8 @@
 
 namespace keyboard {
 
-	static bool caps_lock = false;
+	static bool caps_lock_led = false;
+	static bool caps_lock_released = true;
 	static bool is_shift_pressed = false;
 
 	static void putc(uint8_t key);
@@ -55,12 +56,16 @@ namespace keyboard {
 		
 		if (status & 0x01) {
 			uint8_t key = inb(KEYBOARD_DATA_PORT);
+			terminal::kprintf("key: %x\n", key);
 
-			if (key == KEYCODE::CAPS_LOCK_PRESSED) {
-				caps_lock = !caps_lock;
+			if (key == KEYCODE::CAPS_LOCK_PRESSED && caps_lock_released) {
+				caps_lock_released = false;
+				caps_lock_led = !caps_lock_led;
 				switch_caps_lock_led();
 				return;
 			}
+			else if (key == KEYCODE::CAPS_LOCK_RELEASED)
+				caps_lock_released = true;
 			else if (key == KEYCODE::LEFT_SHIFT_PRESSED || key == KEYCODE::LEFT_SHIFT_RELEASED) {
 				is_shift_pressed = key == KEYCODE::LEFT_SHIFT_PRESSED;
 				return;
@@ -78,7 +83,7 @@ namespace keyboard {
 
 		char c = ascii;
 
-		if (is_letter && (caps_lock || is_shift_pressed))
+		if (is_letter && (caps_lock_led || is_shift_pressed))
 			c = to_capital_letter(ascii);
 		else if (is_shift_pressed)
 			c = with_shift(ascii);
@@ -111,7 +116,7 @@ namespace keyboard {
 	}
 
 	inline static void switch_caps_lock_led() {
-		uint8_t led = caps_lock ? ENABLE_CAPS_LOCK : 0;
+		uint8_t led = caps_lock_led ? ENABLE_CAPS_LOCK : 0;
 
 		outb(0x60, 0xED);
 
