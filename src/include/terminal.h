@@ -11,12 +11,20 @@ namespace terminal {
 	enum VGA_MODE { TEXT, GRAPHICS, UNKNOWN };
 	VGA_MODE get_vga_mode();
 
+    struct color_scheme_t {
+        uint8_t red_position;
+        uint8_t green_position;
+        uint8_t blue_position;
+        uint8_t alpha_position;
+    };
+
 	struct canvas_t {
 		uint32_t width;
 		uint32_t height;
 		uint32_t bytes_per_pixel;
 		uint32_t bytes_per_line;
 		uint8_t *framebuffer_addr = nullptr;
+		color_scheme_t color_scheme;
 	};
 
 	void init(multiboot_framebuffer framebuffer);

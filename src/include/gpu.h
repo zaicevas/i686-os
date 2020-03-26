@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <multiboot2.h>
 #include <stdarg.h>
+#include <terminal.h>
 
 namespace gpu {
 
@@ -14,7 +15,7 @@ namespace gpu {
 		uint8_t alpha;
 	};
 
-	void init(multiboot_framebuffer framebuffer);
+	void init(terminal::canvas_t screen_canvas);
 	void kprintf(const char *s, va_list args); 
 	void kputc(char c);
 	void clear();

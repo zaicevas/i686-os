@@ -24,7 +24,7 @@ namespace idt {
 		asm volatile ( "lidt %0" : : "m"(IDTR) );
 	}
 
-	IDT_entry IDT[IDT_SIZE];
+	static IDT_entry IDT[IDT_SIZE];
 
 	void init() {
 		memset((uint8_t *) &IDT, 0, sizeof(IDT_entry) * IDT_SIZE);
