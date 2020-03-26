@@ -25,6 +25,10 @@ void cpuGetMSR(uint32_t msr, uint32_t *lo, uint32_t *hi);
  
 void cpuSetMSR(uint32_t msr, uint32_t lo, uint32_t hi);
 
+uint32_t read_cr0();
+
+void write_cr0(uint32_t val);
+
 void halt();
 
 void reboot();

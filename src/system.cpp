@@ -79,6 +79,16 @@ void cpuSetMSR(uint32_t msr, uint32_t lo, uint32_t hi) {
    asm volatile("wrmsr" : : "a"(lo), "d"(hi), "c"(msr));
 }
 
+uint32_t read_cr0() {
+    uint32_t val;
+    asm volatile ( "mov %0, %%cr0" : "=r"(val) );
+    return val;
+}
+
+void write_cr0(uint32_t val) {
+    asm volatile ( "mov %%cr0, %0" : : "a"(val) );
+}
+
 void halt() {
 	loop:
 		asm volatile ("hlt");

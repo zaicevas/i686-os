@@ -20,13 +20,8 @@ using namespace terminal;
 	#error "This code must be compiled with an x86-elf compiler"
 #endif
 
-const uint32_t CPUID_FLAG_MSR = 1 << 5;
- 
-bool cpu_has_MSR() {
-	uint32_t ax, dx;
-	cpuid(1, &ax, &dx);
-	return dx & CPUID_FLAG_MSR;
-}
+bool cpu_has_MSR();
+void enable_cache();
 
 extern "C"
 void kmain(uint64_t addr) {
@@ -49,8 +44,6 @@ void kmain(uint64_t addr) {
 	canvas_t screen = terminal::get_screen_canvas();
 	kprintf("Graphics initialized: %d x %d x %d\n", screen.width, screen.height, screen.bytes_per_pixel * 8);
 
-	kprintf("MSR support: %s\n", cpu_has_MSR ? "yes" : "no");
-
 	gdt::init();
 	kprintf("GDT initialized\n");
 
@@ -66,7 +59,25 @@ void kmain(uint64_t addr) {
 	timer::init();
 	kprintf("PIT ticks initialized\n");
 
+	kprintf("MSR support: %s\n", cpu_has_MSR ? "yes" : "no");
+
+	enable_cache();
+	kprintf("CPU Cache: enabled\n");
 
 	halt();
 
+}
+
+bool cpu_has_MSR() {
+	const uint32_t CPUID_FLAG_MSR = 1 << 5;
+ 
+	uint32_t ax, dx;
+	cpuid(1, &ax, &dx);
+	return dx & CPUID_FLAG_MSR;
+}
+
+void enable_cache() {
+	uint32_t cr0 = read_cr0();
+	uint32_t new_cr0 = cr0 & 0x9FFFFFFF; // clearing 29 and 30 bits
+	write_cr0(new_cr0);
 }
