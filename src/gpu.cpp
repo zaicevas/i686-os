@@ -5,9 +5,6 @@
 #include <font.h>
 #include <system.h>
 
-
-uint8_t video_memory[1920*1080*4]; // workaround until kmalloc() is implemented
-
 namespace gpu {
 
     void kputc(char c);
@@ -21,8 +18,6 @@ namespace gpu {
     static void draw_pixel(terminal::canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel);
     static void scroll_down();
     static void clear_line(uint8_t y);
-
-    static void commit_video_memory();
 
     static const pixel_t WHITE = { 0xff, 0xff, 0xff };
     static const pixel_t BLACK = { 0x00, 0x00, 0x00 };
@@ -95,7 +90,7 @@ namespace gpu {
             s++;
         }
 
-        commit_video_memory();
+        //swap_buffers();
     }
 
     void kputc(char c) {
@@ -141,7 +136,7 @@ namespace gpu {
 
         if (terminal::get_chars_y() >= lines_per_screen) {
             scroll_down();
-            commit_video_memory();
+            //swap_buffers();
         }
 
     }
@@ -151,8 +146,10 @@ namespace gpu {
             checking for redundant coppies (empty lines, same letters)
         */
 
-        uint8_t *framebuffer = video_memory;
+        uint8_t *framebuffer = screen_canvas.framebuffer_addr;
         uint32_t bytes_per_line = screen_canvas.bytes_per_line;
+
+        memcpy(framebuffer, framebuffer + bytes_per_line * font_height, bytes_per_line * (lines_per_screen - 1) * font_height);
 
         clear_line(lines_per_screen - 1);
 
@@ -173,7 +170,7 @@ namespace gpu {
     }
 
     inline static void draw_pixel(terminal::canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel) {
-        uint8_t *location = (uint8_t *) video_memory + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
+        uint8_t *location = (uint8_t *) canvas.framebuffer_addr + (canvas.bytes_per_pixel * x) + (canvas.bytes_per_line * y);
 
         if (canvas.bytes_per_pixel > 3)
             location[screen_canvas.color_scheme.alpha_position] = pixel.alpha;
@@ -220,11 +217,19 @@ namespace gpu {
         }
     }
 
-    inline static void commit_video_memory() {
-        uint8_t *framebuffer = screen_canvas.framebuffer_addr;
-        uint32_t framebuffer_size = screen_canvas.width * screen_canvas.height * screen_canvas.bytes_per_pixel; 
+    inline static void swap_buffers() {
+        /*
+        unsigned int visibleBytesPerLine = screen_canvas.bytes_per_line;
+        uint8_t *dest = screen_canvas.framebuffer_addr;
+        uint8_t *src = video_memory;
 
-        memcpy(framebuffer, video_memory, framebuffer_size);
+        for(int y = 0; y < screen_canvas.height; y++) {
+            memcpy(dest, src, visibleBytesPerLine);
+            dest += screen_canvas.bytes_per_line;
+            src += visibleBytesPerLine;
+        }
+        */
     }
 
 }
+

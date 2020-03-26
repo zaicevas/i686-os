@@ -57,7 +57,6 @@ void kmain(uint64_t addr) {
 	idt::init();
 	kprintf("IDT initialized\n");
 
-/*
 	pic::init();
 	kprintf("PIC initialized\n");
 
@@ -66,7 +65,6 @@ void kmain(uint64_t addr) {
 
 	timer::init();
 	kprintf("PIT ticks initialized\n");
-	*/
 
 
 	halt();
