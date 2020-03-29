@@ -3,8 +3,9 @@ Toy OS for i686 arch
 
 ## Usage
 ```
-make # builds and runs qemu
+make # builds .iso and runs qemu
 make clean build # builds .iso
+make clean build run_debug # builds .iso and runs qemu with gdb stub
 ```
 
 ## Features
