@@ -1,15 +1,15 @@
 # i686-os
 Toy OS for i686 arch
 
-## Dependencies
-- nasm
-- QEMU (qemu-system-i386)
-- GCC cross-compiler for i686 in $PATH
-
 ## Usage
 ```
-make 
+make # builds and runs qemu
+make clean build # builds .iso
 ```
+
+## Features
+- Multiboot 2 compliant
+- Graphics mode (VESA)
 
 ### Hardware requirements
 - Should support graphics mode and linear framebuffer
