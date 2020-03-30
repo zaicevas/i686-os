@@ -31,14 +31,14 @@ void kmain(uint64_t addr) {
 		terminal::init(*framebuffer);
 	else {
 		qemu_printf("multiboot_framebuffer not found");
-		return;
+		halt();
 	}
 
 	VGA_MODE vga_mode = terminal::get_vga_mode();
 
 	if (vga_mode != VGA_MODE::GRAPHICS) {
 		kprintf("Only graphics mode is supported by the OS.");
-		return;
+		halt();
 	}
 
 	canvas_t screen = terminal::get_screen_canvas();

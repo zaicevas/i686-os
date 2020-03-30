@@ -1,18 +1,23 @@
 #include <vga.h>
-#include <terminal.h>
 #include <string.h>
 #include <stdint.h>
+#include <debug.h>
 
 #define BLACK_WHITE_TEXT 0x7 
 
-using namespace terminal;
-
+// doesn't support scrolling, cursor
 namespace vga {
-
-    static void kputc(const char c);
+	
+	void init();
     void clear();
+    static void kputc(const char c);
+    void kprint(const char *s); 
+    
+    static terminal::canvas_t screen_canvas;
 
-    void init() {
+    void init(terminal::canvas_t screen_canvas) {
+        vga::screen_canvas = screen_canvas;
+
         clear();
     }
 
@@ -34,6 +39,9 @@ namespace vga {
 
     static void kputc(const char c) {
         uint8_t *video_memory = screen_canvas.framebuffer_addr;
+        uint16_t chars_x = terminal::get_chars_x();
+        uint16_t chars_y = terminal::get_chars_y();
+
         uint16_t offset = chars_x * 2 + chars_y * screen_canvas.bytes_per_line;
         
         if (c == '\b') {
@@ -48,17 +56,17 @@ namespace vga {
         }
         else if (c == '\n') {
             chars_x = 0;
-            chars_y++;
+            terminal::set_chars_y(chars_y + 1);
         }	
         else {
             video_memory[offset] = c;
             video_memory[offset+1] = BLACK_WHITE_TEXT;
-            chars_x++;
+            terminal::set_chars_x(chars_x + 1);
         }
 
         if (chars_x >= screen_canvas.width) {
             chars_x = 0;
-            chars_y++;
+            terminal::set_chars_y(chars_y + 1);
         }
 
     }

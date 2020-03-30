@@ -44,7 +44,7 @@ namespace pic {
     }
 
 	void set_gate(uint8_t index, uint32_t address) {
-        IDT_entry *IDT = get_idt();
+		IDT_entry *IDT = get_idt();
 
 		IDT[index].offset_lowerbits = address & 0xFFFF;
 		IDT[index].selector = KERNEL_CODE_SEGMENT_OFFSET;

@@ -30,9 +30,6 @@ namespace terminal {
 	void init(multiboot_framebuffer framebuffer);
 	void kprintf(const char *s, ...) __attribute__ ((format (printf, 1, 2)));
 
-	static uint16_t chars_x = 0;
-	static uint16_t chars_y = 0;
-	static canvas_t screen_canvas = {};
 
 	canvas_t get_screen_canvas();
 

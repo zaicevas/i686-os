@@ -8,8 +8,8 @@ namespace timer {
     static uint64_t ticks = 0; // should never overflow
 
 	__attribute__((interrupt)) void print_smth(struct interrupt_frame *frame) {
-        ticks++;
-   	END_OF_INTERRUPT 
+		ticks++;
+		END_OF_INTERRUPT 
     }
 
     void set_frequency(uint16_t hz) { // hz times in a second
@@ -21,7 +21,7 @@ namespace timer {
     }
 
     void init() {
-        set_frequency(TIMER_HZ_FREQUENCY);
+		set_frequency(TIMER_HZ_FREQUENCY);
 
 		pic::set_gate(0x20, (uint32_t) &print_smth);
 		pic::unmask(0);

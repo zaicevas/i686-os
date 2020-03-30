@@ -8,6 +8,10 @@
 #define RGB_DEPTH 24
 namespace terminal {
 
+	static uint16_t chars_x = 0;
+	static uint16_t chars_y = 0;
+	static canvas_t screen_canvas = {};
+
 	static VGA_MODE vga_mode = VGA_MODE::UNKNOWN;
 
 	static uint8_t get_alpha_byte_position(multiboot_framebuffer_color_info color_info);
@@ -30,7 +34,7 @@ namespace terminal {
 		vga_mode = framebuffer_type_to_VGA_MODE(framebuffer.framebuffer_type);
 
 		if (vga_mode == VGA_MODE::TEXT)
-			vga::init();
+			vga::init(screen_canvas);
 		else
 			gpu::init(screen_canvas);
 	}
