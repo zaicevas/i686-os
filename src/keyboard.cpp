@@ -56,7 +56,10 @@ namespace keyboard {
 		if (status & 0x01) {
 			uint8_t key = inb(KEYBOARD_DATA_PORT);
 
-			if (key == KEYCODE::CAPS_LOCK_PRESSED && caps_lock_released) {
+			if (key == ENTER_PRESSED) {
+				terminal::handle_enter();
+			}
+			else if (key == KEYCODE::CAPS_LOCK_PRESSED && caps_lock_released) {
 				caps_lock_released = false;
 				caps_lock_led = !caps_lock_led;
 				switch_caps_lock_led();

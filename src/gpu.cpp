@@ -17,6 +17,7 @@ namespace gpu {
 
     static void draw_pixel(terminal::canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel);
     static void scroll_down();
+    static void handle_newline();
     static void clear_line(uint8_t y);
 
     static const pixel_t WHITE = { 0xff, 0xff, 0xff };
@@ -98,11 +99,7 @@ namespace gpu {
         const uint16_t chars_y = terminal::get_chars_y();
 
         if (c == '\b') {
-            if (chars_x != 0) {
-                terminal::set_chars_x(chars_x - 1);
-                kputc(' ');
-                terminal::set_chars_x(chars_x - 1);
-            }
+            terminal::delete_char();
         }
         else if (c == '\t') {
             terminal::set_chars_x((chars_x + TAB_LENGTH) & ~(TAB_LENGTH - 1));
@@ -111,9 +108,7 @@ namespace gpu {
             terminal::set_chars_x(0);
         }
         else if (c == '\n') {
-            if (chars_y < lines_per_screen)
-                terminal::set_chars_y(chars_y + 1);
-            terminal::set_chars_x(0);
+            handle_newline();
         }	
         else {
             const uint8_t *bmp = font::get_bitmap(c);
@@ -139,6 +134,15 @@ namespace gpu {
             //swap_buffers();
         }
 
+    }
+
+    static void handle_newline() {
+        const uint16_t chars_y = terminal::get_chars_y();
+
+        if (chars_y < lines_per_screen)
+            terminal::set_chars_y(chars_y + 1);
+
+        terminal::set_chars_x(0);
     }
 
     static void scroll_down() {

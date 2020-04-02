@@ -64,6 +64,8 @@ void kmain(uint64_t addr) {
 	enable_cache();
 	kprintf("CPU Cache: enabled\n");
 
+	init_user_shell();
+
 	halt();
 
 }

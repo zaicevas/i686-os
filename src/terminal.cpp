@@ -51,6 +51,27 @@ namespace terminal {
 		va_end(args);
 	}
 
+	void handle_enter() {
+        terminal::kprintf("\n%s", terminal::PS1);
+	}
+
+	void init_user_shell() {
+		terminal::kprintf("%s", terminal::PS1);
+	}
+
+	void delete_char() {
+		if (chars_x > strlen(PS1)) {
+			chars_x--;
+
+			if (vga_mode == VGA_MODE::GRAPHICS)
+				gpu::kprintf(" ", nullptr);
+			else if (vga_mode == VGA_MODE::TEXT)
+				vga::kprint(" ");
+
+			chars_x--;
+		}
+	}
+
     static uint8_t get_alpha_byte_position(multiboot_framebuffer_color_info color_info) {
         const uint8_t positions[] = {0, 8, 16, 24};
 

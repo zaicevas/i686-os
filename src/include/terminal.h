@@ -8,6 +8,8 @@
 #define TAB_LENGTH 8
 
 namespace terminal { 
+	const char* const PS1 = "[root ~]$ ";
+
 	enum VGA_MODE { TEXT, GRAPHICS, UNKNOWN };
 	VGA_MODE get_vga_mode();
 
@@ -29,7 +31,9 @@ namespace terminal {
 
 	void init(multiboot_framebuffer framebuffer);
 	void kprintf(const char *s, ...) __attribute__ ((format (printf, 1, 2)));
-
+	void handle_enter();
+	void init_user_shell(); 
+	void delete_char();
 
 	canvas_t get_screen_canvas();
 
