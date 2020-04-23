@@ -11,6 +11,7 @@ make clean build run_debug # builds .iso and runs qemu with gdb stub
 ## Features
 - Multiboot 2 compliant
 - Graphics mode (VESA)
+- Flat memory model
 
 ### Hardware requirements
 - Should support graphics mode and linear framebuffer
