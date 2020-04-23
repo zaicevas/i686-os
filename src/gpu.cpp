@@ -5,6 +5,8 @@
 #include <font.h>
 #include <system.h>
 
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
 namespace gpu {
 
     void kputc(char c);
@@ -13,7 +15,7 @@ namespace gpu {
     static void kputstr(char *s);
     static void kputint(int32_t i);
     static void kputhexdigit(uint8_t i);
-    static void kputhex(uint32_t i);
+    static void kputhex(uint64_t i);
 
     static void draw_pixel(terminal::canvas_t canvas, uint32_t x, uint32_t y, const pixel_t pixel);
     static void scroll_down();
@@ -46,7 +48,7 @@ namespace gpu {
 
     // https://github.com/dthain/basekernel/blob/master/kernel/printf.c
     void kprintf(const char *s, va_list args) {
-        uint32_t u;
+        uint64_t u;
         int32_t i;
         char *str;
 
@@ -62,12 +64,12 @@ namespace gpu {
 
                     break;
                 case 'u':
-                    u = va_arg(args, uint32_t);
+                    u = va_arg(args, uint64_t);
                     kputstr(itoa(u));
 
                     break;
                 case 'x':
-                    u = va_arg(args, uint32_t);
+                    u = va_arg(args, uint64_t);
                     kputhex(u);
                     break;
                 case 's':
@@ -215,11 +217,21 @@ namespace gpu {
             }
     }
 
-    inline static void kputhex(uint32_t i) {
-        kprintf("0x", nullptr);
-        for(int j = 28; j >= 0; j = j - 4) {
-            kputhexdigit((i >> j) & 0x0f);
+    inline static uint8_t get_large_two_factor_of(uint64_t x) {
+        uint8_t i = 0;
+        while ((1ULL << i) <= x)
+            i++;
+        
+        return i;
+    }
+
+    inline static void kputhex(uint64_t i) {
+        uint8_t char_amount = (get_large_two_factor_of(i) + 3) / 4;
+
+        for (int j=MAX((char_amount - 1), 0); j>=0; j--) {
+            kputhexdigit((i >> j*4) & 0x0f);
         }
+
     }
 
     inline static void swap_buffers() {

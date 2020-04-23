@@ -37,7 +37,27 @@ struct multiboot_basic_memory_information {
 	uint32_t mem_upper;
 };
 
+struct multiboot_memory_map {
+  uint64_t addr;
+  uint64_t len;
+#define MULTIBOOT_MEMORY_AVAILABLE              1
+#define MULTIBOOT_MEMORY_RESERVED               2
+#define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3
+#define MULTIBOOT_MEMORY_NVS                    4
+#define MULTIBOOT_MEMORY_BADRAM                 5
+  uint32_t type;
+  uint32_t zero;
+};
+struct multiboot_tag_mmap {
+  uint32_t type;
+  uint32_t size;
+  uint32_t entry_size;
+  uint32_t entry_version;
+  multiboot_memory_map entries[0];  
+};
+
 multiboot_framebuffer *get_framebuffer(uint64_t addr);
 multiboot_basic_memory_information *get_basic_meminfo(uint64_t addr);
+multiboot_tag_mmap *get_memory_map(uint64_t addr);
 
 #endif

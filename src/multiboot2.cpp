@@ -12,6 +12,7 @@
 
 #define MULTIBOOT_INFORMATION_TAG_TYPE_FRAMEBUFFER 8
 #define MULTIBOOT_INFORMATION_TAG_TYPE_BASIC_MEMINFO 4
+#define MULTIBOOT_INFORMATION_TAG_TYPE_MEMORY_MAP 6
 #define MULTIBOOT_INFORMATION_TAG_TYPE_END 0
 
 struct multiboot_tag {
@@ -123,6 +124,23 @@ multiboot_basic_memory_information *get_basic_meminfo(uint64_t addr) {
 		}
     }
     return meminfo; 
+}
+
+multiboot_tag_mmap *get_memory_map(uint64_t addr) {
+    multiboot_tag_mmap *mmap = nullptr;
+	for (multiboot_tag *tag = (multiboot_tag*) (addr + 8);
+        tag->type != MULTIBOOT_INFORMATION_TAG_TYPE_END;
+        tag = (struct multiboot_tag *) ((uint8_t *) tag + ((tag->size + 7) & ~7))) {
+
+		switch (tag->type) {
+			case MULTIBOOT_INFORMATION_TAG_TYPE_MEMORY_MAP:
+			{
+				mmap = (multiboot_tag_mmap*) tag;
+			}
+				break;
+		}
+    }
+    return mmap; 
 }
 
 multiboot_framebuffer *get_framebuffer(uint64_t addr) {
