@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-struct multiboot_framebuffer_color_info {	    // only when framebuffer_type = 1 (RBA)
+struct multiboot_framebuffer_color_info {	  // only relevant when framebuffer_type = 1 (RBA)
 	uint8_t framebuffer_red_field_position;
 	uint8_t framebuffer_red_mask_size;
 	uint8_t framebuffer_green_field_position;
@@ -30,6 +30,14 @@ struct multiboot_framebuffer {
 	multiboot_framebuffer_color_info color_info;
 };
 
-multiboot_framebuffer* get_framebuffer(uint64_t addr) ;
+struct multiboot_basic_memory_information {
+	uint32_t type;
+	uint32_t size;
+	uint32_t mem_lower;
+	uint32_t mem_upper;
+};
+
+multiboot_framebuffer *get_framebuffer(uint64_t addr);
+multiboot_basic_memory_information *get_basic_meminfo(uint64_t addr);
 
 #endif

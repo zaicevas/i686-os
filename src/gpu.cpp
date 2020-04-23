@@ -216,6 +216,7 @@ namespace gpu {
     }
 
     inline static void kputhex(uint32_t i) {
+        kprintf("0x", nullptr);
         for(int j = 28; j >= 0; j = j - 4) {
             kputhexdigit((i >> j) & 0x0f);
         }

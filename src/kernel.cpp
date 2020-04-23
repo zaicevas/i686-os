@@ -24,8 +24,9 @@ bool cpu_has_MSR();
 void enable_cache();
 
 extern "C"
-void kmain(uint64_t addr) {
-	multiboot_framebuffer *framebuffer = get_framebuffer(addr);
+void kmain(uint64_t multiboot_addr) {
+	multiboot_framebuffer *framebuffer = get_framebuffer(multiboot_addr);
+	multiboot_basic_memory_information *meminfo = get_basic_meminfo(multiboot_addr);
 
 	if (framebuffer)
 		terminal::init(*framebuffer);
@@ -59,12 +60,15 @@ void kmain(uint64_t addr) {
 	timer::init();
 	kprintf("PIT ticks initialized\n");
 
+	kprintf("Lower memory has %x kb\n", meminfo->mem_lower);
+	kprintf("Upper memory has %x kb\n", meminfo->mem_upper);
+
 	kprintf("MSR support: %s\n", cpu_has_MSR ? "yes" : "no");
 
 	enable_cache();
 	kprintf("CPU Cache: enabled\n");
 
-	init_user_shell();
+	terminal::init_user_shell();
 
 	halt();
 

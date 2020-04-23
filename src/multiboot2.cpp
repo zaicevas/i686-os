@@ -10,8 +10,9 @@
 #define MULTIBOOT_HEADER_TAG_INFORMATION_REQUEST 1
 #define MULTIBOOT_HEADER_FLAGS_NOT_OPTIONAL 0
 
-#define MULTIBOOT_INFORMATION_TAG_TYPE_END 0
 #define MULTIBOOT_INFORMATION_TAG_TYPE_FRAMEBUFFER 8
+#define MULTIBOOT_INFORMATION_TAG_TYPE_BASIC_MEMINFO 4
+#define MULTIBOOT_INFORMATION_TAG_TYPE_END 0
 
 struct multiboot_tag {
   uint32_t type;
@@ -106,7 +107,25 @@ void print_framebuffer_debug(multiboot_framebuffer *framebuffer) {
 	qemu_printf("\n");
 }
 
-multiboot_framebuffer* get_framebuffer(uint64_t addr) {
+// TOOD: refactor to get all multiboot information structs in one loop
+multiboot_basic_memory_information *get_basic_meminfo(uint64_t addr) {
+	multiboot_basic_memory_information *meminfo = nullptr;	
+	for (multiboot_tag *tag = (multiboot_tag*) (addr + 8);
+        tag->type != MULTIBOOT_INFORMATION_TAG_TYPE_END;
+        tag = (struct multiboot_tag *) ((uint8_t *) tag + ((tag->size + 7) & ~7))) {
+
+		switch (tag->type) {
+			case MULTIBOOT_INFORMATION_TAG_TYPE_BASIC_MEMINFO:
+			{
+				meminfo = (multiboot_basic_memory_information*) tag;
+			}
+				break;
+		}
+    }
+    return meminfo; 
+}
+
+multiboot_framebuffer *get_framebuffer(uint64_t addr) {
     multiboot_framebuffer *framebuffer = nullptr;
 	for (multiboot_tag *tag = (multiboot_tag*) (addr + 8);
         tag->type != MULTIBOOT_INFORMATION_TAG_TYPE_END;
