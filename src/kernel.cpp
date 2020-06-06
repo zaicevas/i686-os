@@ -20,6 +20,9 @@ using namespace terminal;
 	#error "This code must be compiled with an x86-elf compiler"
 #endif
 
+extern "C" void *kernel_starts_at;
+extern "C" void *kernel_ends_at;
+
 bool cpu_has_MSR();
 void enable_cache();
 
@@ -48,6 +51,11 @@ void kmain(uint64_t multiboot_addr) {
 
 	kprintf("%d files loaded\n", modules_count);
 
+	for (uint8_t i = 0; i<modules_count; i++) {
+		multiboot_module *module = get_module(multiboot_addr, i);
+		kprintf("File loaded: %s\n", module->string);
+	}
+
 	multiboot_tag_mmap *mmap = get_memory_map(multiboot_addr);
 	kprintf("Memory areas available for OS:\n");
 
@@ -74,8 +82,8 @@ void kmain(uint64_t multiboot_addr) {
 	pic::init();
 	kprintf("PIC initialized\n");
 
-	// keyboard::init();
-	// kprintf("PS/2 Keyboard initialized\n");
+	keyboard::init();
+	kprintf("PS/2 Keyboard initialized\n");
 
 	timer::init();
 	kprintf("PIT ticks initialized\n");
@@ -88,11 +96,13 @@ void kmain(uint64_t multiboot_addr) {
 	enable_cache();
 	kprintf("CPU Cache: enabled\n");
 
-	// terminal::init_user_shell();
-	for (uint8_t i = 0; i<modules_count; i++) {
-		multiboot_module *module = get_module(multiboot_addr, i);
-		kprintf("File loaded: %s\n", module->string);
-	}
+	unsigned int kernel_memory_start = (unsigned int) &kernel_starts_at;
+	unsigned int kernel_memory_end = (unsigned int) &kernel_ends_at;
+
+	kprintf("Kernel in memory starts at: 0x%x\n", kernel_memory_start);
+	kprintf("Kernel in memory ends at: 0x%x\n", kernel_memory_end);
+
+	terminal::init_user_shell();
 
 	// kprintf("before\n");
 	// kprintf("executing: %s\n", (modules)->string);
