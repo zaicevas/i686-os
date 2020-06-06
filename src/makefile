@@ -55,6 +55,8 @@ ${ISO_KERNEL}: ${KERNEL}
 	@mkdir -p tmp/boot/grub
 	@cp ${BIN_PATH}/kernel.elf tmp/boot
 	@cp grub/grub.cfg tmp/boot/grub
+	@cp ../user-space/program tmp/boot
+	@cp ../user-space/program2 tmp/boot
 	@grub-mkrescue -o ${BIN_PATH}/kernel.iso tmp
 	@rm -r tmp
 

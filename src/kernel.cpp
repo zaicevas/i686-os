@@ -1,4 +1,3 @@
-
 #include <stdint.h>
 #include <terminal.h>
 #include <debug.h>
@@ -28,6 +27,8 @@ extern "C"
 void kmain(uint64_t multiboot_addr) {
 	multiboot_framebuffer *framebuffer = get_framebuffer(multiboot_addr);
 	multiboot_basic_memory_information *meminfo = get_basic_meminfo(multiboot_addr);
+	uint16_t modules_count = get_modules_count(multiboot_addr);
+	multiboot_module *modules = get_modules(multiboot_addr);
 
 	if (framebuffer)
 		terminal::init(*framebuffer);
@@ -45,6 +46,8 @@ void kmain(uint64_t multiboot_addr) {
 
 	canvas_t screen = terminal::get_screen_canvas();
 	kprintf("Graphics initialized: %d x %d x %d\n", screen.width, screen.height, screen.bytes_per_pixel * 8);
+
+	kprintf("%d files loaded\n", modules_count);
 
 	multiboot_tag_mmap *mmap = get_memory_map(multiboot_addr);
 	kprintf("Memory areas available for OS:\n");

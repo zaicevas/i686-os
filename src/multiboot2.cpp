@@ -10,6 +10,8 @@
 #define MULTIBOOT_HEADER_TAG_INFORMATION_REQUEST 1
 #define MULTIBOOT_HEADER_FLAGS_NOT_OPTIONAL 0
 
+#define MULTIBOOT_MODULE_TAG_TYPE 3
+
 #define MULTIBOOT_INFORMATION_TAG_TYPE_FRAMEBUFFER 8
 #define MULTIBOOT_INFORMATION_TAG_TYPE_BASIC_MEMINFO 4
 #define MULTIBOOT_INFORMATION_TAG_TYPE_MEMORY_MAP 6
@@ -141,6 +143,38 @@ multiboot_tag_mmap *get_memory_map(uint64_t addr) {
 		}
     }
     return mmap; 
+}
+
+uint16_t get_modules_count(uint64_t addr) {
+	uint16_t count = 0;
+	for (multiboot_tag *tag = (multiboot_tag*) (addr + 8);
+        tag->type != MULTIBOOT_INFORMATION_TAG_TYPE_END;
+        tag = (struct multiboot_tag *) ((uint8_t *) tag + ((tag->size + 7) & ~7))) {
+		switch (tag->type) {
+			case 3:
+			{
+				count++;
+			}
+				break;
+		}
+    }
+    return count; 
+}
+
+multiboot_module *get_modules(uint64_t addr) {
+    multiboot_module *module = nullptr;
+	for (multiboot_tag *tag = (multiboot_tag*) (addr + 8);
+        tag->type != MULTIBOOT_INFORMATION_TAG_TYPE_END;
+        tag = (struct multiboot_tag *) ((uint8_t *) tag + ((tag->size + 7) & ~7))) {
+		switch (tag->type) {
+			case 3:
+			{
+				module = (multiboot_module*) tag;
+			}
+				break;
+		}
+    }
+    return module; 
 }
 
 multiboot_framebuffer *get_framebuffer(uint64_t addr) {
