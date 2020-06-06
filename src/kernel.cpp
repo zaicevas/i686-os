@@ -11,6 +11,7 @@
 #include <gdt.h>
 #include <pic.h>
 #include <timer.h>
+#include <memory.h>
 
 using namespace terminal;
 
@@ -19,9 +20,6 @@ using namespace terminal;
 #elif !defined(__i386__)
 	#error "This code must be compiled with an x86-elf compiler"
 #endif
-
-extern "C" void *kernel_starts_at;
-extern "C" void *kernel_ends_at;
 
 bool cpu_has_MSR();
 void enable_cache();
@@ -56,23 +54,6 @@ void kmain(uint64_t multiboot_addr) {
 		kprintf("File loaded: %s\n", module->string);
 	}
 
-	multiboot_tag_mmap *mmap = get_memory_map(multiboot_addr);
-	kprintf("Memory areas available for OS:\n");
-
-	uint64_t ram = 0;
-	uint64_t mega_byte = 0x100000;
-		
-	multiboot_memory_map *map; 
-	for (map = mmap->entries; (uint8_t*) map < (uint8_t*) mmap + mmap->size;
-		map = (multiboot_memory_map *) ((uint32_t) map + ((multiboot_tag_mmap *) mmap)->entry_size)) {
-			if (map->type == MULTIBOOT_MEMORY_AVAILABLE) {
-				terminal::kprintf("[0x%x, 0x%x] sum: %uMB\n", map->addr, (uint64_t) (map->addr + map->len), map->len / mega_byte);
-				ram += map->len;
-			}
-	}
-
-	kprintf("RAM: %uMB\n", ram / mega_byte);
-
 	gdt::init();
 	kprintf("GDT initialized\n");
 
@@ -91,16 +72,16 @@ void kmain(uint64_t multiboot_addr) {
 	// kprintf("Lower memory has %x kb\n", meminfo->mem_lower);
 	// kprintf("Upper memory has %x kb\n", meminfo->mem_upper);
 
-	kprintf("MSR support: %s\n", cpu_has_MSR ? "yes" : "no");
+	kprintf("MSR support: %s\n", cpu_has_MSR() ? "yes" : "no");
 
 	enable_cache();
 	kprintf("CPU Cache: enabled\n");
 
-	unsigned int kernel_memory_start = (unsigned int) &kernel_starts_at;
-	unsigned int kernel_memory_end = (unsigned int) &kernel_ends_at;
+	memory::init(multiboot_addr);
+	kprintf("Memory manager initialized\n");
 
-	kprintf("Kernel in memory starts at: 0x%x\n", kernel_memory_start);
-	kprintf("Kernel in memory ends at: 0x%x\n", kernel_memory_end);
+	kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
+	memory::print_kernel_memory();
 
 	terminal::init_user_shell();
 
@@ -109,8 +90,6 @@ void kmain(uint64_t multiboot_addr) {
 	// typedef void (*call_module_t)(void);
 	// call_module_t start_program = (call_module_t) modules->mod_start;
     // start_program();
-
-	kprintf("after");
 
 	halt();
 
