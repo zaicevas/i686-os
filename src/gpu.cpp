@@ -47,8 +47,11 @@ namespace gpu {
     }
 
     // https://github.com/dthain/basekernel/blob/master/kernel/printf.c
+    // FIX ME: make %lu work with uint32_t
+    // TODO: mimic standard printf format
     void kprintf(const char *s, va_list args) {
-        uint64_t u;
+        uint32_t u;
+        uint64_t lu;
         int32_t i;
         char *str;
 
@@ -64,13 +67,21 @@ namespace gpu {
 
                     break;
                 case 'u':
-                    u = va_arg(args, uint64_t);
+                    u = va_arg(args, uint32_t);
                     kputstr(itoa(u));
 
                     break;
+                case 'l':
+                    if (*(s+1) == 'u') {
+                        s++;
+                        lu = va_arg(args, uint64_t);
+                        kputstr(itoa(lu));
+                    }
+
+                    break;
                 case 'x':
-                    u = va_arg(args, uint64_t);
-                    kputhex(u);
+                    lu = va_arg(args, uint64_t);
+                    kputhex(lu);
                     break;
                 case 's':
                     str = va_arg(args, char *);
