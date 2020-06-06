@@ -69,6 +69,12 @@ void kmain(uint64_t multiboot_addr) {
 	timer::init();
 	kprintf("PIT ticks initialized\n");
 
+	memory::init(multiboot_addr);
+	kprintf("Memory manager initialized\n");
+
+	kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
+	memory::print_kernel_memory();
+
 	// kprintf("Lower memory has %x kb\n", meminfo->mem_lower);
 	// kprintf("Upper memory has %x kb\n", meminfo->mem_upper);
 
@@ -76,12 +82,6 @@ void kmain(uint64_t multiboot_addr) {
 
 	enable_cache();
 	kprintf("CPU Cache: enabled\n");
-
-	memory::init(multiboot_addr);
-	kprintf("Memory manager initialized\n");
-
-	kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
-	memory::print_kernel_memory();
 
 	terminal::init_user_shell();
 
