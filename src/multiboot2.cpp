@@ -147,12 +147,24 @@ multiboot_tag_mmap *get_memory_map(uint64_t addr) {
 
 uint16_t get_modules_count(uint64_t addr) {
 	uint16_t count = 0;
+    multiboot_module *module = nullptr;
 	for (multiboot_tag *tag = (multiboot_tag*) (addr + 8);
         tag->type != MULTIBOOT_INFORMATION_TAG_TYPE_END;
         tag = (struct multiboot_tag *) ((uint8_t *) tag + ((tag->size + 7) & ~7))) {
 		switch (tag->type) {
-			case 3:
+			case MULTIBOOT_MODULE_TAG_TYPE:
 			{
+				module = (multiboot_module*) tag;
+				qemu_printf("Module found, start: ");
+				qemu_printf(itoa(module->mod_start));
+				qemu_printf(", end: ");
+				qemu_printf(itoa(module->mod_end));
+				qemu_printf(", size: ");
+				qemu_printf(itoa(module->size));
+				qemu_printf(", string: ");
+				qemu_printf(module->string);
+				qemu_printf(".");
+				qemu_printf("\n");
 				count++;
 			}
 				break;
@@ -161,20 +173,23 @@ uint16_t get_modules_count(uint64_t addr) {
     return count; 
 }
 
-multiboot_module *get_modules(uint64_t addr) {
+multiboot_module *get_module(uint64_t addr, uint16_t index) {
     multiboot_module *module = nullptr;
+	uint16_t i = 0;
 	for (multiboot_tag *tag = (multiboot_tag*) (addr + 8);
         tag->type != MULTIBOOT_INFORMATION_TAG_TYPE_END;
         tag = (struct multiboot_tag *) ((uint8_t *) tag + ((tag->size + 7) & ~7))) {
 		switch (tag->type) {
-			case 3:
+			case MULTIBOOT_MODULE_TAG_TYPE:
 			{
 				module = (multiboot_module*) tag;
+				if (i++ == index)
+					return module;
 			}
 				break;
 		}
     }
-    return module; 
+	return nullptr;
 }
 
 multiboot_framebuffer *get_framebuffer(uint64_t addr) {

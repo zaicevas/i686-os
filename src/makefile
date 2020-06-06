@@ -30,6 +30,9 @@ clean:
 	@rm -rf ${BIN_PATH}
 	@rm -rf tmp
 
+install-user-space:
+	${CC} ../user-space/hello-world.cpp -o ../user-space/hello-world.o ${CFLAGS}
+
 run: ${ISO_KERNEL}
 	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio 
 
@@ -57,6 +60,7 @@ ${ISO_KERNEL}: ${KERNEL}
 	@cp grub/grub.cfg tmp/boot/grub
 	@cp ../user-space/program tmp/boot
 	@cp ../user-space/program2 tmp/boot
+	@cp ../user-space/hello-world tmp/boot
 	@grub-mkrescue -o ${BIN_PATH}/kernel.iso tmp
 	@rm -r tmp
 

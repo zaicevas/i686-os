@@ -28,7 +28,6 @@ void kmain(uint64_t multiboot_addr) {
 	multiboot_framebuffer *framebuffer = get_framebuffer(multiboot_addr);
 	multiboot_basic_memory_information *meminfo = get_basic_meminfo(multiboot_addr);
 	uint16_t modules_count = get_modules_count(multiboot_addr);
-	multiboot_module *modules = get_modules(multiboot_addr);
 
 	if (framebuffer)
 		terminal::init(*framebuffer);
@@ -59,7 +58,7 @@ void kmain(uint64_t multiboot_addr) {
 	for (map = mmap->entries; (uint8_t*) map < (uint8_t*) mmap + mmap->size;
 		map = (multiboot_memory_map *) ((uint32_t) map + ((multiboot_tag_mmap *) mmap)->entry_size)) {
 			if (map->type == MULTIBOOT_MEMORY_AVAILABLE) {
-				terminal::kprintf("[0x%x, 0x%x]\n", map->addr, (uint64_t) (map->addr + map->len));
+				terminal::kprintf("[0x%x, 0x%x] sum: %uMB\n", map->addr, (uint64_t) (map->addr + map->len), map->len / mega_byte);
 				ram += map->len;
 			}
 	}
@@ -75,8 +74,8 @@ void kmain(uint64_t multiboot_addr) {
 	pic::init();
 	kprintf("PIC initialized\n");
 
-	keyboard::init();
-	kprintf("PS/2 Keyboard initialized\n");
+	// keyboard::init();
+	// kprintf("PS/2 Keyboard initialized\n");
 
 	timer::init();
 	kprintf("PIT ticks initialized\n");
@@ -89,7 +88,19 @@ void kmain(uint64_t multiboot_addr) {
 	enable_cache();
 	kprintf("CPU Cache: enabled\n");
 
-	terminal::init_user_shell();
+	// terminal::init_user_shell();
+	for (uint8_t i = 0; i<modules_count; i++) {
+		multiboot_module *module = get_module(multiboot_addr, i);
+		kprintf("File loaded: %s\n", module->string);
+	}
+
+	// kprintf("before\n");
+	// kprintf("executing: %s\n", (modules)->string);
+	// typedef void (*call_module_t)(void);
+	// call_module_t start_program = (call_module_t) modules->mod_start;
+    // start_program();
+
+	kprintf("after");
 
 	halt();
 

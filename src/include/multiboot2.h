@@ -42,7 +42,7 @@ struct multiboot_module {
 	uint32_t size;
 	uint32_t mod_start;
 	uint32_t mod_end;
-	uint8_t string[];
+	char string[0];
 };
 
 struct multiboot_memory_map {
@@ -67,7 +67,7 @@ struct multiboot_tag_mmap {
 multiboot_framebuffer *get_framebuffer(uint64_t addr);
 multiboot_basic_memory_information *get_basic_meminfo(uint64_t addr);
 multiboot_tag_mmap *get_memory_map(uint64_t addr);
-multiboot_module *get_modules(uint64_t addr);
+multiboot_module *get_module(uint64_t addr, uint16_t index);
 uint16_t get_modules_count(uint64_t addr);
 
 #endif
