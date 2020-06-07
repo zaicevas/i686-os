@@ -5,6 +5,7 @@
 #define MULTIBOOT_HEADER_MAGIC 0xE85250D6
 #define MULTIBOOT_HEADER_ARCHITECTURE 0		// 32-bit (protected) i386
 
+#define MULTIBOOT_HEADER_TAG_MODULE_ALIGN 6
 #define MULTIBOOT_HEADER_TAG_FRAMEBUFFER 5
 #define MULTIBOOT_HEADER_TAG_FRAMEBUFFER_SIZE 20
 #define MULTIBOOT_HEADER_TAG_INFORMATION_REQUEST 1
@@ -30,6 +31,12 @@ struct multiboot_vbe {
 	uint16_t vbe_interface_seg;
 	uint16_t vbe_interface_off;
 	uint16_t vbe_interface_len;
+};
+
+struct multiboot_header_tag_module_align {
+  uint16_t type = MULTIBOOT_HEADER_TAG_MODULE_ALIGN;
+  uint16_t flags = MULTIBOOT_HEADER_FLAGS_NOT_OPTIONAL;
+  uint32_t size = 8;
 };
 
 struct __attribute__((aligned (8))) multiboot_header_tag_framebuffer {
@@ -60,11 +67,12 @@ struct multiboot_header_tag_terminator {
 struct multiboot_header {
 	const uint32_t magic = MULTIBOOT_HEADER_MAGIC;
 	const uint32_t architecture = MULTIBOOT_HEADER_ARCHITECTURE;
-	const uint32_t header_length = 64;
+	const uint32_t header_length = 72;
 	const uint32_t checksum = -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_ARCHITECTURE + header_length);
 
 	multiboot_header_tag_framebuffer mb_tag_framebuffer;
 	multiboot_header_tag_information_request mb_info_request;
+	multiboot_header_tag_module_align mb_module_align;
 	multiboot_header_tag_terminator terminator;
 } mb_header __attribute__((section(".multiboot")));
 
