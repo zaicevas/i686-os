@@ -111,52 +111,12 @@ namespace paging {
 
         unsigned int i;
 
-        memset((uint8_t*)page_directory, 0, 4 * 1024);
-        memset((uint8_t*)first_page_table, 0, 4 * 1024);
-        
-        //we will fill all 1024 entries in the table, mapping 4 megabytes
-        for (i = 0; i < 1024; i++) {
-            // As the address is page aligned, it will always leave 12 bits zeroed.
-            // Those bits are used by the attributes ;)
+        for(i = 0; i < 1024; i++) {
+            page_directory[i] = 0x00000002;
             first_page_table[i] = (i * 0x1000) | 3; // attributes: supervisor level, read/write, present.
         }
-
         page_directory[0] = ((unsigned int)first_page_table) | 3;
 
-/*
-        // The size of physical memory. For the moment we 
-        // assume it is 16MB big.
-        // TODO: find the end of RAM
-        uint32_t mem_end_page = 0x1000000;
-        
-        nframes = mem_end_page / 0x1000;
-        frames = (uint32_t*) kmalloc(INDEX_FROM_BIT(nframes));
-        memset((uint8_t*) frames, 0, INDEX_FROM_BIT(nframes));
-        
-        // Let's make a page directory.
-        kernel_directory = (page_directory_t*) kmalloc_a(sizeof(page_directory_t));
-        current_directory = kernel_directory;
-
-        // We need to identity map (phys addr = virt addr) from
-        // 0x0 to the end of used memory, so we can access this
-        // transparently, as if paging wasn't enabled.
-        // NOTE that we use a while loop here deliberately.
-        // inside the loop body we actually change placement_address
-        // by calling kmalloc(). A while loop causes this to be
-        // computed on-the-fly rather than once at the start.
-        // uint32_t i = 0;
-        // while (i < placement_address * 2) {
-        //     // Kernel code is readable but not writeable from userspace.
-        //     alloc_frame( get_page(i, 1, kernel_directory), 0, 0);
-        //     i += 0x1000;
-        //     qemu_printf("i: ");
-        //     qemu_printf(itoa(i));
-        //     qemu_printf("\n");
-        // }
-        // Before we enable paging, we must register our page fault handler.
-        // pic::set_gate(14, (uint32_t) &page_fault);
-
-        */
         pic::register_interrupt_handler(14, (uint32_t) page_fault);
 
         // Now, enable paging!
@@ -164,8 +124,7 @@ namespace paging {
     }
 
     void switch_page_directory(page_directory_t *dir) {
-        // current_directory = dir;
-        asm volatile("mov %%cr3, %0":: "r"(page_directory)); // write to cr3
+        asm volatile("mov %%cr3, %0":: "r"((uint32_t) page_directory)); // write to cr3
         // while(true) {}
         uint32_t cr0 = read_cr0();
         cr0 |= 0x80000000; // Enable paging!
