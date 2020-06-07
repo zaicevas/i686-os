@@ -76,18 +76,18 @@ void kmain(uint64_t multiboot_addr) {
 	paging::init();
 	kprintf("Paging initialized\n");
 
-	kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
-	memory::print_kernel_memory();
+	// kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
+	// memory::print_kernel_memory();
 
-	// kprintf("Lower memory has %x kb\n", meminfo->mem_lower);
-	// kprintf("Upper memory has %x kb\n", meminfo->mem_upper);
+	// // kprintf("Lower memory has %x kb\n", meminfo->mem_lower);
+	// // kprintf("Upper memory has %x kb\n", meminfo->mem_upper);
 
-	kprintf("MSR support: %s\n", cpu_has_MSR() ? "yes" : "no");
+	// kprintf("MSR support: %s\n", cpu_has_MSR() ? "yes" : "no");
 
-	enable_cache();
-	kprintf("CPU Cache: enabled\n");
+	// enable_cache();
+	// kprintf("CPU Cache: enabled\n");
 
-	terminal::init_user_shell();
+	// terminal::init_user_shell();
 
 	// uint32_t *ptr = (uint32_t*) 0xA0000000;
 	// uint32_t do_page_fault = *ptr;

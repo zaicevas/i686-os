@@ -18,6 +18,7 @@ namespace paging {
 
     uint32_t page_directory[1024] __attribute__((aligned(4096)));
     uint32_t first_page_table[1024] __attribute__((aligned(4096)));
+    uint32_t second_page_table[1024] __attribute__((aligned(4096)));
 
     uint64_t placement_address = 0;
 
@@ -110,12 +111,15 @@ namespace paging {
         paging::placement_address = (uint32_t) &kernel_ends_at;
 
         unsigned int i;
+        uint64_t framebuffer = 0xFD000000;
 
         for(i = 0; i < 1024; i++) {
             page_directory[i] = 0x00000002;
             first_page_table[i] = (i * 0x1000) | 3; // attributes: supervisor level, read/write, present.
+            second_page_table[i] = (i * 0x1000 + framebuffer) | 3; // attributes: supervisor level, read/write, present.
         }
         page_directory[0] = ((unsigned int)first_page_table) | 3;
+        page_directory[1] = ((unsigned int)second_page_table) | 3;
 
         pic::register_interrupt_handler(14, (uint32_t) page_fault);
 
@@ -172,13 +176,13 @@ namespace paging {
         int id = error_code & 0x10;          // Caused by an instruction fetch?
 
         // Output an error message.
-        kprintf("Page fault! ( ");
-        if (present) {kprintf("present ");}
-        if (rw) {kprintf("read-only ");}
-        if (us) {kprintf("user-mode ");}
-        if (reserved) {kprintf("reserved ");}
-        kprintf(") at 0x%x\n", faulting_address);
-        PANIC("Page fault");
+        // kprintf("Page fault! ( ");
+        // if (present) {kprintf("present ");}
+        // if (rw) {kprintf("read-only ");}
+        // if (us) {kprintf("user-mode ");}
+        // if (reserved) {kprintf("reserved ");}
+        // kprintf(") at 0x%x\n", faulting_address);
+        // PANIC("Page fault");
     }
 
 }
