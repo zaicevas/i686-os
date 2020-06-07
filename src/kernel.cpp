@@ -85,6 +85,9 @@ void kmain(uint64_t multiboot_addr) {
 
 	terminal::init_user_shell();
 
+	// division by zero:
+	// __asm__  ("div %0" :: "r"(0));
+
 	// kprintf("before\n");
 	// kprintf("executing: %s\n", (modules)->string);
 	// typedef void (*call_module_t)(void);

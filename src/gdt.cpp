@@ -16,7 +16,7 @@ namespace gdt {
         uint32_t base;
     } __attribute__((packed));
 
-    struct gdt_entry gdt[3];
+    struct gdt_entry gdt[5];
     
     // points to gdt entries
     struct gdtr_t gdtr;
@@ -48,7 +48,7 @@ namespace gdt {
     }
 
     void init() {
-        gdtr.limit = (sizeof(gdt_entry) * 3) - 1;
+        gdtr.limit = (sizeof(gdt_entry) * 5) - 1;
         gdtr.base = (uint32_t) &gdt;
 
         /* NULL descriptor */
@@ -56,6 +56,9 @@ namespace gdt {
 
         gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); // CS
         gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // DS
+        // http://www.jamesmolloy.co.uk/tutorial_html/4.-The%20GDT%20and%20IDT.html
+        gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User mode code segment
+        gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User mode data segment
 
         //gdt_set_gate(&tss, 0, 0xFFFFFFFF, 0x89, 0xCF); // TSS, todo
 

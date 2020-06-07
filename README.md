@@ -28,6 +28,7 @@ g++ -S -masm=intel -o kernel.asm
 ### Other useful stuff
 - QEMU framebuffer address 0xFD000000 (https://wiki.osdev.org/Drawing_In_Protected_Mode)
 - Writing to a USB flash drive `sudo dd if=myos.iso of=/dev/sdx && sync`
+- https://gitlab.indel.ch/thirdparty/gcc/commit/5ed3cc7b66af4758f7849ed6f65f4365be8223be documentation for `__attribute__((interrupt))`
 
 ### TODO
 - Change #define to const where appropriate

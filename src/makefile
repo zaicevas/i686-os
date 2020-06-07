@@ -5,7 +5,7 @@ FONT_EXT = psf
 CC = i686-elf-g++
 BIN_PATH = ../bin
 CFLAGS = -I ${INCLUDE_PATH} -c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -g -mgeneral-regs-only -masm=intel
-# -mgeneral-regs-only fixed issue with __attribute__((interrupt))
+# -mgeneral-regs-only is required to use __attribute__((interrupt))
 ASM_FLAGS = -felf32 
 LINKER_FLAGS = -T ${LINKER_PATH} -ffreestanding -O2 -nostdlib -g -lgcc
 LINKER_PATH = linker.ld
