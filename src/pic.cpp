@@ -48,6 +48,7 @@ namespace pic {
 	void setup_cpu_dedicated_irqs();
 	void handle_cpu_interrupt(uint32_t);
 
+	// https://forum.osdev.org/viewtopic.php?f=1&t=24218 discussion regarding division by zero infinite loop
 	__attribute__((interrupt)) void isr0(interrupt_frame *frame) {
 		asm volatile ("cli");
 		kprintf("\nDivision by zero handled\n");
