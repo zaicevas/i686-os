@@ -5,7 +5,10 @@
 #include <debug.h>
 #include <terminal.h>
 
+// other interrupts are disabled for this gate, while handler is being run
+// read more: https://wiki.osdev.org/Interrupt_Descriptor_Table
 #define INTERRUPT_GATE 0x8E
+
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 #define PIC1_COMMAND 0x20
 #define PIC1_DATA 0x21
@@ -50,11 +53,11 @@ namespace pic {
 
 	// https://forum.osdev.org/viewtopic.php?f=1&t=24218 discussion regarding division by zero infinite loop
 	__attribute__((interrupt)) void isr0(interrupt_frame *frame) {
-		asm volatile ("cli");
 		kprintf("\nDivision by zero handled\n");
-		asm volatile ("sti");
+		// to reenable keyboard, uncomment:
+		// asm volatile ("sti");
 		halt();
-		// END_OF_INTERRUPT
+		END_OF_INTERRUPT
 	}
 
 	__attribute__((interrupt)) void isr1(interrupt_frame *frame) {
