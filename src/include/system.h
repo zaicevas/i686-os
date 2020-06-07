@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+// should be moved to memory.h
 void *memcpy(uint8_t *dest, uint8_t *src, uint64_t n);
 
 void *memset(uint8_t *dest, uint8_t val, uint64_t n);
