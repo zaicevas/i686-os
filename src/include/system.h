@@ -1,6 +1,8 @@
 #ifndef SYSTEM_H 
 #define SYSTEM_H
 
+#define PANIC(msg) panic(msg, __FILE__, __LINE__);
+
 #include <stdint.h>
 
 // should be moved to memory.h
@@ -33,5 +35,7 @@ void write_cr0(uint32_t val);
 void halt();
 
 void reboot();
+
+void panic(const char *message, const char *file, uint32_t line);
 
 #endif

@@ -1,5 +1,6 @@
 #include <system.h>
 #include <debug.h>
+#include <terminal.h>
 
 #define KBRD_INTRFC 0x64
  
@@ -14,6 +15,8 @@
  
 /* Check if bit n in flags is set */
 #define check_flag(flags, n) ((flags) & bit(n))
+
+using namespace terminal;
 
 void *memcpy(uint8_t *dest, uint8_t *src, uint64_t n) {
     uint8_t *p = dest;
@@ -111,4 +114,10 @@ void reboot() {
     outb(KBRD_INTRFC, KBRD_RESET); /* pulse CPU reset line */
 
     halt();
+}
+
+void panic(const char *message, const char *file, uint32_t line) {
+    asm volatile("cli"); 
+    kprintf("PANIC(%s) at %s: %u\n", message, file, line);
+    for(;;);
 }
