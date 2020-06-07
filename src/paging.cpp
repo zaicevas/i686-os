@@ -109,7 +109,7 @@ namespace paging {
         memset((uint8_t*) frames, 0, INDEX_FROM_BIT(nframes));
         
         // Let's make a page directory.
-        kernel_directory = (page_directory_t*)kmalloc_a(sizeof(page_directory_t));
+        kernel_directory = (page_directory_t*) kmalloc_a(sizeof(page_directory_t));
         current_directory = kernel_directory;
 
         // We need to identity map (phys addr = virt addr) from
@@ -135,11 +135,10 @@ namespace paging {
 
     void switch_page_directory(page_directory_t *dir) {
         current_directory = dir;
-        asm volatile("mov %0, %%cr3":: "r"(&dir->tablesPhysical));
-        uint32_t cr0;
-        asm volatile("mov %%cr0, %0": "=r"(cr0));
+        asm volatile("mov %%cr3, %0":: "r"(&dir->tablesPhysical)); // write to cr3
+        uint32_t cr0 = read_cr0();
         cr0 |= 0x80000000; // Enable paging!
-        asm volatile("mov %0, %%cr0":: "r"(cr0));
+        write_cr0(cr0);
     }
 
     page_t *get_page(uint32_t address, int make, page_directory_t *dir) {
@@ -166,7 +165,7 @@ namespace paging {
         // A page fault has occurred.
         // The faulting address is stored in the CR2 register.
         uint32_t faulting_address;
-        asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
+        asm volatile("mov %0, %%cr2" : "=r" (faulting_address));
         
         // The error code gives us details of what happened.
         int present = !(error_code & 0x1); // Page not present
