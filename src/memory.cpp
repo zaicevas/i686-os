@@ -56,7 +56,7 @@ namespace memory {
         placement_address += sz;
         qemu_printf("Allocated ");
         qemu_printf(itoa(sz));
-        qemu_printf(" of RAM, starting at: ");
+        qemu_printf(" bytes of RAM, starting at: ");
         qemu_printf(itoa(tmp));
         qemu_printf("\n");
         return tmp;

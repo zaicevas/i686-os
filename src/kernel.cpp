@@ -12,6 +12,7 @@
 #include <pic.h>
 #include <timer.h>
 #include <memory.h>
+#include <paging.h>
 
 using namespace terminal;
 
@@ -72,6 +73,9 @@ void kmain(uint64_t multiboot_addr) {
 	memory::init(multiboot_addr);
 	kprintf("Memory manager initialized\n");
 
+	paging::init();
+	kprintf("Paging initialized\n");
+
 	kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
 	memory::print_kernel_memory();
 
@@ -84,6 +88,9 @@ void kmain(uint64_t multiboot_addr) {
 	kprintf("CPU Cache: enabled\n");
 
 	terminal::init_user_shell();
+
+	// uint32_t *ptr = (uint32_t*) 0xA0000000;
+	// uint32_t do_page_fault = *ptr;
 
 	// division by zero:
 	// __asm__  ("div %0" :: "r"(0));

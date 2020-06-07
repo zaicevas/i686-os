@@ -43,6 +43,7 @@ using namespace terminal;
 
 typedef unsigned int uword_t __attribute__ ((mode (__word__)));
 struct interrupt_frame;
+typedef void (*isr_t)(uword_t);
 
 // TODO: investigate bug, when 2 interrupt handlers have an exact same body
 // and you get 'interrupt service routine can't be called directly' error
@@ -50,6 +51,12 @@ namespace pic {
 
 	void setup_cpu_dedicated_irqs();
 	void handle_cpu_interrupt(uint32_t);
+
+	uint32_t interrupt_handlers[256];
+
+	void register_interrupt_handler(uint8_t index, uint32_t handler_address) {
+		interrupt_handlers[index] = handler_address;
+	}
 
 	// https://forum.osdev.org/viewtopic.php?f=1&t=24218 discussion regarding division by zero infinite loop
 	__attribute__((interrupt)) void isr0(interrupt_frame *frame) {
@@ -114,6 +121,10 @@ namespace pic {
 		END_OF_INTERRUPT
 	}
 	__attribute__((interrupt)) void isr14(interrupt_frame *frame, uword_t error_code) {
+		if (interrupt_handlers[14] != 0) {
+			isr_t call_handler = (isr_t) interrupt_handlers[14];
+			call_handler(error_code);
+		}
 		kprintf("\nPage fault handled, error code: %u\n", error_code);
 		END_OF_INTERRUPT
 	}
@@ -162,6 +173,7 @@ namespace pic {
 		outb(PIC2_DATA, 0xFF);
 
 		setup_cpu_dedicated_irqs();
+		memset((uint8_t*) interrupt_handlers, 0, sizeof(uint32_t)*256);
     }
 
 	void setup_cpu_dedicated_irqs() {
