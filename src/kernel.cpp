@@ -88,7 +88,6 @@ void kmain(uint64_t multiboot_addr) {
 	enable_cache();
 	kprintf("CPU Cache: enabled\n");
 
-	terminal::init_user_shell();
 
 	// uint32_t *ptr = (uint32_t*) 0xA0000000;
 	// uint32_t do_page_fault = *ptr;
@@ -103,7 +102,9 @@ void kmain(uint64_t multiboot_addr) {
 	// call_module_t start_program = (call_module_t) modules->mod_start;
     // start_program();
 
-	kprintf("is_elf_valid_arch: %s", is_elf_valid_arch((Elf32_Ehdr*) module->mod_start) ? "yes" : "no");
+	kprintf("is_elf: %s\n", is_elf((Elf32_Ehdr*) module->mod_start) ? "yes" : "no");
+
+	terminal::init_user_shell();
 
 	halt();
 

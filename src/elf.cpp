@@ -1,7 +1,7 @@
 #include <elf.h>
 #include <system.h>
 
-bool is_elf(Elf32_Ehdr *hdr) {
+bool is_elf_file(Elf32_Ehdr *hdr) {
 	if(!hdr) return false;
 	if(hdr->e_ident[EI_MAG0] != ELFMAG0) {
 		PANIC("ELF Header EI_MAG0 incorrect");
@@ -22,8 +22,8 @@ bool is_elf(Elf32_Ehdr *hdr) {
 	return true;
 }
 
-bool is_elf_valid_arch(Elf32_Ehdr *hdr) {
-	if(!is_elf(hdr)) {
+bool is_elf(Elf32_Ehdr *hdr) {
+	if(!is_elf_file(hdr)) {
 		PANIC("Invalid ELF File");
 		return false;
 	}

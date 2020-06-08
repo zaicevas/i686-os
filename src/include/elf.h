@@ -60,6 +60,5 @@ enum Elf_Ident {
 };
 
 bool is_elf(Elf32_Ehdr *hdr);
-bool is_elf_valid_arch(Elf32_Ehdr *hdr);
 
 #endif
