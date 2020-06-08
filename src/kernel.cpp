@@ -13,6 +13,7 @@
 #include <timer.h>
 #include <memory.h>
 #include <paging.h>
+#include <elf.h>
 
 using namespace terminal;
 
@@ -73,8 +74,8 @@ void kmain(uint64_t multiboot_addr) {
 	memory::init(multiboot_addr);
 	kprintf("Memory manager initialized\n");
 
-	paging::init();
-	kprintf("Paging initialized\n");
+	// paging::init();
+	// kprintf("Paging initialized\n");
 
 	kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
 	memory::print_kernel_memory();
@@ -95,11 +96,14 @@ void kmain(uint64_t multiboot_addr) {
 	// division by zero:
 	// __asm__  ("div %0" :: "r"(0));
 
-	// kprintf("before\n");
-	// kprintf("executing: %s\n", (modules)->string);
+	multiboot_module *module = get_module(multiboot_addr, 0);
+	kprintf("before\n");
+	kprintf("checking: %s\n", (module)->string);
 	// typedef void (*call_module_t)(void);
 	// call_module_t start_program = (call_module_t) modules->mod_start;
     // start_program();
+
+	kprintf("is_elf_valid_arch: %s", is_elf_valid_arch((Elf32_Ehdr*) module->mod_start) ? "yes" : "no");
 
 	halt();
 
