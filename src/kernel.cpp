@@ -15,6 +15,7 @@
 #include <paging.h>
 #include <elf.h>
 #include <cat.h>
+#include <fs.h>
 
 using namespace terminal;
 
@@ -50,12 +51,21 @@ void kmain(uint64_t multiboot_addr) {
 	canvas_t screen = terminal::get_screen_canvas();
 	kprintf("Graphics initialized: %d x %d x %d\n", screen.width, screen.height, screen.bytes_per_pixel * 8);
 
-	kprintf("%d files loaded\n", modules_count);
+	// kprintf("%d files loaded\n", modules_count);
+
+
+
+	fs::init(modules_count);
 
 	for (uint8_t i = 0; i<modules_count; i++) {
 		multiboot_module *module = get_module(multiboot_addr, i);
-		kprintf("File loaded: %s\n", module->string);
+		fs::add_file(module);
+		// kprintf("File loaded: %s\n", module->string);
 	}
+
+	kprintf("File system initialized");
+
+
 
 	gdt::init();
 	kprintf("GDT initialized\n");
@@ -90,9 +100,9 @@ void kmain(uint64_t multiboot_addr) {
 	kprintf("CPU Cache: enabled\n");
 
 
-	multiboot_module *module = get_module(multiboot_addr, 1);
-	kprintf("catting: %s\n", (module)->string);
-	cat((uint8_t*) module->mod_start);
+	// multiboot_module *module = get_module(multiboot_addr, 1);
+	// cat((uint8_t*) module->mod_start);
+	// fs::ls();
 
 	terminal::init_user_shell();
 
