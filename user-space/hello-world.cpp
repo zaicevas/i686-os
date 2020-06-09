@@ -1,9 +1,9 @@
-#include <stdint.h>
 #include <terminal.h>
 
 using namespace terminal;
 
 extern "C"
-void main() {
+int main() {
     kprintf("Hello, world!");
+	return 0;
 }
