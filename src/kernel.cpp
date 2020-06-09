@@ -14,6 +14,7 @@
 #include <memory.h>
 #include <paging.h>
 #include <elf.h>
+#include <cat.h>
 
 using namespace terminal;
 
@@ -89,20 +90,9 @@ void kmain(uint64_t multiboot_addr) {
 	kprintf("CPU Cache: enabled\n");
 
 
-	// uint32_t *ptr = (uint32_t*) 0xA0000000;
-	// uint32_t do_page_fault = *ptr;
-
-	// division by zero:
-	// __asm__  ("div %0" :: "r"(0));
-
-	multiboot_module *module = get_module(multiboot_addr, 0);
-	kprintf("before\n");
-	kprintf("checking: %s\n", (module)->string);
-	// typedef void (*call_module_t)(void);
-	// call_module_t start_program = (call_module_t) modules->mod_start;
-    // start_program();
-
-	kprintf("is_elf: %s\n", is_elf((Elf32_Ehdr*) module->mod_start) ? "yes" : "no");
+	multiboot_module *module = get_module(multiboot_addr, 1);
+	kprintf("catting: %s\n", (module)->string);
+	cat((uint8_t*) module->mod_start);
 
 	terminal::init_user_shell();
 
