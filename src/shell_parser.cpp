@@ -15,10 +15,10 @@ namespace shell_parser {
         "Shell commands:\n"
         "? - print this message\n"
         "reboot - reboot system\n"
-        "ls - list directory contents\n"
+        "ls - list files\n"
         "cat file - print contents of file X\n"
         "echo X - print X\n"
-        "ps - print all running processes\n";
+        "ps - print all running processes (not implemented yet)\n";
 
     PARSED_COMMAND parse(char *input) {
         char *trimmed_input = trim(input);
@@ -59,6 +59,9 @@ namespace shell_parser {
         }
         else if (cmd == PARSED_COMMAND::CAT) {
             return fs::cat(get_second_word(input));
+        }
+        else if (cmd == PARSED_COMMAND::ECHO) {
+            return ignore_first_word(input);
         }
 
         return "err: unknown command";
