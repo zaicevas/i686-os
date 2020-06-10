@@ -14,7 +14,6 @@
 #include <memory.h>
 #include <paging.h>
 #include <elf.h>
-#include <cat.h>
 #include <fs.h>
 
 using namespace terminal;

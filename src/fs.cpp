@@ -37,4 +37,16 @@ namespace fs {
         return result;
     }
 
+    char *cat(char *file_name) {
+        multiboot_module *file = nullptr;
+        for (uint8_t i=0; i<files_count; i++) {
+            if (are_strings_equal(files[i]->string, file_name))
+                file = files[i];
+        }
+        if (file == nullptr)
+            return "err: no such file";
+        
+        return (char *) file->mod_start;
+    }
+
 }

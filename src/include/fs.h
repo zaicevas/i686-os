@@ -9,6 +9,7 @@ namespace fs {
     void init(uint8_t files_count);
     void add_file(multiboot_module *module);
     char *ls();
+    char *cat(char *file_name);
 
 }
 

@@ -35,6 +35,15 @@ namespace shell_parser {
         else if (are_strings_equal(trimmed_input, "ls")) {
             return PARSED_COMMAND::LS;
         }
+        else if (are_strings_equal(trimmed_input, "ps")) {
+            return PARSED_COMMAND::PS;
+        }
+        else if (contains_first_word(input, "cat")) {
+            return PARSED_COMMAND::CAT;
+        }
+        else if (contains_first_word(input, "echo")) {
+            return PARSED_COMMAND::ECHO;
+        }
         return PARSED_COMMAND::UNKNOWN;
     }
 
@@ -47,6 +56,9 @@ namespace shell_parser {
             return help_msg;
         else if (cmd == PARSED_COMMAND::LS) {
             return fs::ls();
+        }
+        else if (cmd == PARSED_COMMAND::CAT) {
+            return fs::cat("hello.txt");
         }
 
         return "err: unknown command";
