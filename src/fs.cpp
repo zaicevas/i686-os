@@ -33,7 +33,7 @@ namespace fs {
             result[j + strlen(files[i]->string)] = ' ';
             j += strlen(files[i]->string) + 1;
         }
-        result[j] = 0;
+        result[j-1] = 0;
         return result;
     }
 

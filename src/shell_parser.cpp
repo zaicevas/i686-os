@@ -58,7 +58,7 @@ namespace shell_parser {
             return fs::ls();
         }
         else if (cmd == PARSED_COMMAND::CAT) {
-            return fs::cat("hello.txt");
+            return fs::cat(get_second_word(input));
         }
 
         return "err: unknown command";
