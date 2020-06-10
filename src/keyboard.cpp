@@ -87,7 +87,7 @@ namespace keyboard {
 		else if (is_shift_pressed)
 			c = with_shift(ascii);
 
-		terminal::kprintf("%c", c);
+		terminal::kputc(c);
 	}
 
 	inline static char with_shift(char c) {

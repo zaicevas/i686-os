@@ -8,6 +8,10 @@
 #define RGB_DEPTH 24
 namespace terminal {
 
+	static char user_input[4096] = {};
+	static uint16_t user_input_index = 0;
+	static bool user_shell_active = false;
+
 	static uint16_t chars_x = 0;
 	static uint16_t chars_y = 0;
 	static canvas_t screen_canvas = {};
@@ -19,7 +23,6 @@ namespace terminal {
 	static VGA_MODE framebuffer_type_to_VGA_MODE(uint8_t framebuffer_type); 
 	void init(multiboot_framebuffer framebuffer); 
 	void kprintf(const char *s, ...); 
-
 
 	void init(multiboot_framebuffer framebuffer) {
 		screen_canvas = {
@@ -51,16 +54,39 @@ namespace terminal {
 		va_end(args);
 	}
 
+	void kputc(char c) {
+		if (user_shell_active) {
+			user_input[user_input_index] = c;
+			user_input[user_input_index+1] = 0;
+			user_input_index++;
+		}
+
+		if (vga_mode == VGA_MODE::GRAPHICS)
+			gpu::kputc(c);
+		else if (vga_mode == VGA_MODE::TEXT)
+			vga::kprint(&c);
+	}
+
 	void handle_enter() {
-        terminal::kprintf("\n%s", terminal::PS1);
+		if (user_shell_active) {
+			terminal::kprintf("\n%s", terminal::PS1);
+			qemu_printf("user_input: ");
+			qemu_printf(user_input);
+			qemu_printf("\n");
+			user_input_index = 0;
+			user_input[0] = 0;
+		}
 	}
 
 	void init_user_shell() {
+		user_shell_active = true;
 		terminal::kprintf("%s", terminal::PS1);
 	}
 
 	void delete_char() {
-		if (chars_x > strlen(PS1)) {
+		if ((user_shell_active && chars_x > strlen(PS1)) || !user_shell_active) {
+			if (user_shell_active)
+				user_input_index--;
 			chars_x--;
 
 			if (vga_mode == VGA_MODE::GRAPHICS)

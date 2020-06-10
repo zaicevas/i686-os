@@ -31,6 +31,7 @@ namespace terminal {
 
 	void init(multiboot_framebuffer framebuffer);
 	void kprintf(const char *s, ...) __attribute__ ((format (printf, 1, 2)));
+	void kputc(char c);
 	void handle_enter();
 	void init_user_shell(); 
 	void delete_char();
