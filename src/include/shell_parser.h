@@ -13,7 +13,7 @@ namespace shell_parser {
         ECHO
     };
 
-    PARSED_COMMAND parse(char *input);
+    char *build_kernel_output(char *input);
 
 }
 

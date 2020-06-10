@@ -56,10 +56,13 @@ namespace terminal {
 	}
 
 	void kputc(char c) {
-		if (user_shell_active) {
+		if (user_shell_active && c != '\b') {
 			user_input[user_input_index] = c;
 			user_input[user_input_index+1] = 0;
 			user_input_index++;
+			qemu_printf("user_input_index of c: ");
+			qemu_printf(itoa(user_input_index));
+			qemu_printf("\n");
 		}
 
 		if (vga_mode == VGA_MODE::GRAPHICS)
@@ -74,21 +77,12 @@ namespace terminal {
 			terminal::kprintf("%s", terminal::PS1);
 	}
 
-	static void handle_parsed_input(shell_parser::PARSED_COMMAND command) {
-		if (command == shell_parser::PARSED_COMMAND::HELP) {
-			kprintf("need some help? :/");
-		}
-		else {
-			print_kernel_message("err: unknown command");
-		}
-	}
-
 	void handle_enter() {
 		if (user_shell_active) {
 			qemu_printf("user_input: ");
 			qemu_printf(user_input);
 			qemu_printf("\n");
-			handle_parsed_input(shell_parser::parse(user_input));
+			print_kernel_message(shell_parser::build_kernel_output(user_input));
 			user_input_index = 0;
 			user_input[0] = 0;
 		}
@@ -101,8 +95,13 @@ namespace terminal {
 
 	void delete_char() {
 		if ((user_shell_active && chars_x > strlen(PS1)) || !user_shell_active) {
-			if (user_shell_active)
+			if (user_shell_active) {
 				user_input_index--;
+				qemu_printf("user_input_index: ");
+				qemu_printf(itoa(user_input_index));
+				qemu_printf("\n");
+				user_input[user_input_index] = 0;
+			}
 			chars_x--;
 
 			if (vga_mode == VGA_MODE::GRAPHICS)

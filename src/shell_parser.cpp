@@ -3,6 +3,10 @@
 #include <debug.h>
 
 namespace shell_parser {
+    static char *help_msg = "TomixOS, version 0.1 (i686-elf)\n \
+        hey there! \
+        sup";
+
     PARSED_COMMAND parse(char *input) {
         char *trimmed_input = trim(input);
         qemu_printf(trimmed_input);
@@ -14,4 +18,13 @@ namespace shell_parser {
         }
         return PARSED_COMMAND::UNKNOWN;
     }
+
+    char *build_kernel_output(char *input) {
+        PARSED_COMMAND cmd = parse(input);
+        if (cmd == PARSED_COMMAND::HELP)
+            return help_msg;
+
+        return "err: unknown command";
+    }
+
 }
