@@ -1,6 +1,9 @@
 #include <fs.h>
 #include <terminal.h>
 #include <memory.h>
+#include <string.h>
+#include <system.h>
+#include <debug.h>
 
 using namespace terminal;
 using namespace memory;
@@ -9,6 +12,7 @@ namespace fs {
 
     multiboot_module **files;
     static uint8_t files_count = 0;
+    static uint8_t file_names_strlen = 0;
     static uint8_t current_file_index = 0;
 
     void init(uint8_t files_count) {
@@ -18,12 +22,19 @@ namespace fs {
 
     void add_file(multiboot_module *module) {
         files[current_file_index++] = module;
+        file_names_strlen += strlen(module->string);
     }
 
-    void ls() {
-        for (uint8_t i=0; i<files_count; i++)
-            kprintf("%s ", files[i]->string);
-        kprintf("\n");
+    char *ls() {
+        char *result = (char *) kmalloc(file_names_strlen + files_count); // files_count for spaces
+        uint8_t j = 0;
+        for (uint8_t i=0; i<files_count; i++) {
+            memcpy((uint8_t *) result + j, (uint8_t *) files[i]->string, strlen(files[i]->string));
+            result[j + strlen(files[i]->string)] = ' ';
+            j += strlen(files[i]->string) + 1;
+        }
+        result[j] = 0;
+        return result;
     }
 
 }

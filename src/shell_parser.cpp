@@ -2,9 +2,10 @@
 #include <string.h>
 #include <debug.h>
 #include <system.h>
+#include <fs.h>
 
 namespace shell_parser {
-    static char *help_msg= ""
+    static char *help_msg = 
         "  __                  __        \n" 
         "_/  |_  ____   _____ |__|__  ___\n"
         "\\   __\\/  _ \\ /     \\|  \\  \\/  /\n"
@@ -31,15 +32,21 @@ namespace shell_parser {
         else if (are_strings_equal(trimmed_input, "reboot")) {
             return PARSED_COMMAND::REBOOT;
         }
+        else if (are_strings_equal(trimmed_input, "ls")) {
+            return PARSED_COMMAND::LS;
+        }
         return PARSED_COMMAND::UNKNOWN;
     }
 
     char *build_kernel_output(char *input) {
         PARSED_COMMAND cmd = parse(input);
+        if (cmd == PARSED_COMMAND::REBOOT) {
+           reboot(); 
+        }
         if (cmd == PARSED_COMMAND::HELP)
             return help_msg;
-        else if (cmd == PARSED_COMMAND::REBOOT) {
-           reboot(); 
+        else if (cmd == PARSED_COMMAND::LS) {
+            return fs::ls();
         }
 
         return "err: unknown command";
