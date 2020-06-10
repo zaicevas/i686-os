@@ -4,6 +4,7 @@
 #include <vga.h>
 #include <gpu.h>
 #include <terminal.h>
+#include <shell_parser.h>
 
 #define RGB_DEPTH 24
 namespace terminal {
@@ -67,14 +68,29 @@ namespace terminal {
 			vga::kprint(&c);
 	}
 
+	static void print_kernel_message(char *s) {
+		kprintf("\n%s\n", s);
+		if (user_shell_active)
+			terminal::kprintf("%s", terminal::PS1);
+	}
+
+	static void handle_parsed_input(shell_parser::PARSED_COMMAND command) {
+		if (command == shell_parser::PARSED_COMMAND::HELP) {
+			kprintf("need some help? :/");
+		}
+		else {
+			print_kernel_message("err: unknown command");
+		}
+	}
+
 	void handle_enter() {
 		if (user_shell_active) {
-			terminal::kprintf("\n%s", terminal::PS1);
 			qemu_printf("user_input: ");
 			qemu_printf(user_input);
 			qemu_printf("\n");
 			user_input_index = 0;
 			user_input[0] = 0;
+			handle_parsed_input(shell_parser::parse(user_input));
 		}
 	}
 
