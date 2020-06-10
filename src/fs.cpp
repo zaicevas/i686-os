@@ -22,6 +22,8 @@ namespace fs {
 
     void add_file(multiboot_module *module) {
         files[current_file_index++] = module;
+        char *end = (char *) module->mod_end;
+        *(end-1) = 0;
         file_names_strlen += strlen(module->string);
     }
 
