@@ -11,7 +11,8 @@ namespace shell_parser {
         CAT,
         HELP,
         ECHO,
-        REBOOT
+        REBOOT,
+        PS
     };
 
     char *build_kernel_output(char *input);

@@ -10,12 +10,14 @@ namespace shell_parser {
         "\\   __\\/  _ \\ /     \\|  \\  \\/  /\n"
         " |  | (  <_> )  Y Y  \\  |>    < \n"
         " |__|  \\____/|__|_|  /__/__/\\__\\\n\n"
-        "TomixOS, version 0.1 (i686-elf)\n"
+        "TomixOS, version 0.1 (i686-elf)\n\n"
+        "Shell commands:\n"
         "? - print this message\n"
         "reboot - reboot system\n"
         "ls - list directory contents\n"
-        "cat X - print contents of file X\n"
-        "echo X - print X\n";
+        "cat file - print contents of file X\n"
+        "echo X - print X\n"
+        "ps - print all running processes\n";
 
     PARSED_COMMAND parse(char *input) {
         char *trimmed_input = trim(input);
