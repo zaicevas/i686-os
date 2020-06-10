@@ -55,15 +55,6 @@ void kmain(uint64_t multiboot_addr) {
 
 
 
-	fs::init(modules_count);
-
-	for (uint8_t i = 0; i<modules_count; i++) {
-		multiboot_module *module = get_module(multiboot_addr, i);
-		fs::add_file(module);
-		// kprintf("File loaded: %s\n", module->string);
-	}
-
-	kprintf("File system initialized");
 
 
 
@@ -85,24 +76,23 @@ void kmain(uint64_t multiboot_addr) {
 	memory::init(multiboot_addr);
 	kprintf("Memory manager initialized\n");
 
-	// paging::init();
-	// kprintf("Paging initialized\n");
-
 	kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
 	memory::print_kernel_memory();
 
-	// kprintf("Lower memory has %x kb\n", meminfo->mem_lower);
-	// kprintf("Upper memory has %x kb\n", meminfo->mem_upper);
+
+	fs::init(modules_count);
+
+	for (uint8_t i = 0; i<modules_count; i++) {
+		multiboot_module *module = get_module(multiboot_addr, i);
+		fs::add_file(module);
+	}
+
+	kprintf("File system initialized\n");
 
 	kprintf("MSR support: %s\n", cpu_has_MSR() ? "yes" : "no");
 
 	enable_cache();
 	kprintf("CPU Cache: enabled\n");
-
-
-	// multiboot_module *module = get_module(multiboot_addr, 1);
-	// cat((uint8_t*) module->mod_start);
-	// fs::ls();
 
 	terminal::init_user_shell();
 
