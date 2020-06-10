@@ -88,9 +88,9 @@ namespace terminal {
 			qemu_printf("user_input: ");
 			qemu_printf(user_input);
 			qemu_printf("\n");
+			handle_parsed_input(shell_parser::parse(user_input));
 			user_input_index = 0;
 			user_input[0] = 0;
-			handle_parsed_input(shell_parser::parse(user_input));
 		}
 	}
 
