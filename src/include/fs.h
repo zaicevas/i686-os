@@ -10,6 +10,7 @@ namespace fs {
     void add_file(multiboot_module *module);
     char *ls();
     char *cat(char *file_name);
+    multiboot_module *get_file_by_name(char *name);
 
 }
 

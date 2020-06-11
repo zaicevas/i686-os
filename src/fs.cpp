@@ -20,6 +20,14 @@ namespace fs {
         files = (multiboot_module**) kmalloc(sizeof(multiboot_module*) * files_count);
     }
 
+    multiboot_module *get_file_by_name(char *name) {
+        for (uint8_t i=0; i<files_count; i++) {
+            if (are_strings_equal(files[i]->string, name))
+                return files[i];
+        }
+        return nullptr;
+    }
+
     void add_file(multiboot_module *module) {
         files[current_file_index++] = module;
         char *end = (char *) module->mod_end;
