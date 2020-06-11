@@ -54,6 +54,8 @@ namespace scheduler {
     void kill_process(uint8_t id) {
         processes[id].is_ended = true;
         alive_process_count--;
+        if (alive_process_count == 0)
+            move_to_shell_mode();
     }
 
     void on_keyboard_terminate_interrupt(uint8_t number) {
@@ -109,8 +111,6 @@ namespace scheduler {
     void on_process_sys_exit() {
         kprintf("Process (id: %u) has successfully ended\n", active_process_index);
         kill_process(active_process_index);
-        if (alive_process_count == 0)
-            move_to_shell_mode();
     }
 
     bool get_is_shell_mode() {
