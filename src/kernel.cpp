@@ -15,6 +15,7 @@
 #include <paging.h>
 #include <elf.h>
 #include <fs.h>
+#include <scheduler.h>
 
 using namespace terminal;
 
@@ -65,9 +66,6 @@ void kmain(uint64_t multiboot_addr) {
 	keyboard::init();
 	kprintf("PS/2 Keyboard initialized\n");
 
-	// timer::init();
-	// kprintf("PIT ticks initialized\n");
-
 	kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
 	memory::print_kernel_memory();
 
@@ -80,6 +78,11 @@ void kmain(uint64_t multiboot_addr) {
 
 	kprintf("File system initialized\n");
 
+	// timer::init();
+	// kprintf("PIT ticks initialized\n");
+	scheduler::init();
+	kprintf("Scheduler initialized\n");
+
 	kprintf("MSR support: %s\n", cpu_has_MSR() ? "yes" : "no");
 
 	enable_cache();
@@ -87,10 +90,11 @@ void kmain(uint64_t multiboot_addr) {
 
 	terminal::init_user_shell();
 
-	typedef void (*call_module_t)(void);
-    kprintf("module: %s\n", get_module(multiboot_addr, 2)->string);
-    call_module_t start_program = (call_module_t) get_module(multiboot_addr, 2)->mod_start;
-    start_program();
+	kprintf("module by name: %s\n", fs::get_file_by_name("call_interrupt")->string);
+	// typedef void (*call_module_t)(void);
+    // kprintf("module: %s\n", get_module(multiboot_addr, 2)->string);
+    // call_module_t start_program = (call_module_t) get_module(multiboot_addr, 2)->mod_start;
+    // start_program();
 
 	halt();
 
