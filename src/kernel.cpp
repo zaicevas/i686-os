@@ -50,12 +50,8 @@ void kmain(uint64_t multiboot_addr) {
 	canvas_t screen = terminal::get_screen_canvas();
 	kprintf("Graphics initialized: %d x %d x %d\n", screen.width, screen.height, screen.bytes_per_pixel * 8);
 
-	// kprintf("%d files loaded\n", modules_count);
-
-
-
-
-
+	memory::init(multiboot_addr);
+	kprintf("Memory manager initialized\n");
 
 	gdt::init();
 	kprintf("GDT initialized\n");
@@ -69,15 +65,11 @@ void kmain(uint64_t multiboot_addr) {
 	keyboard::init();
 	kprintf("PS/2 Keyboard initialized\n");
 
-	timer::init();
-	kprintf("PIT ticks initialized\n");
-
-	memory::init(multiboot_addr);
-	kprintf("Memory manager initialized\n");
+	// timer::init();
+	// kprintf("PIT ticks initialized\n");
 
 	kprintf("Available RAM: %uMB\n", memory::get_available_ram_mb());
 	memory::print_kernel_memory();
-
 
 	fs::init(modules_count);
 
@@ -94,6 +86,15 @@ void kmain(uint64_t multiboot_addr) {
 	kprintf("CPU Cache: enabled\n");
 
 	terminal::init_user_shell();
+
+	typedef void (*call_module_t)(void);
+    call_module_t start_program = (call_module_t) get_module(multiboot_addr, 2)->mod_start;
+    start_program();
+	kprintf("post interrupt\n");
+	kprintf("post interrupt\n");
+	kprintf("post interrupt\n");
+	kprintf("post interrupt\n");
+	kprintf("post interrupt\n");
 
 	halt();
 
