@@ -62,8 +62,12 @@ namespace scheduler {
         if (is_shell_mode && alive_process_count > 0) {
             move_out_of_shell_mode();
         }
+        else if (is_shell_mode && alive_process_count == 0) {
+            move_to_shell_mode();
+        }
         if (alive_process_count >= 2) {
-            qemu_printf("more than 2processes, have to switch");
+            qemu_printf("more than 2 processes, have to switch");
+            qemu_printf("\n");
         }
     }
 
