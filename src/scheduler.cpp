@@ -4,6 +4,7 @@
 #include <multiboot2.h>
 #include <debug.h>
 #include <terminal.h>
+#include <string.h>
 
 const uint8_t MAX_PROCESS_COUNT = 10;
 
@@ -58,17 +59,43 @@ namespace scheduler {
         kill_process(number);
     }
 
+    static void execute_code(uint32_t addr) {
+        typedef void (*call_t)(void);
+        call_t execute = (call_t) addr;
+        execute();
+    }
+
+    static process_t get_next_process_to_execute() {
+        uint8_t next_alive_index = active_process_index + 1;
+        while (processes[next_alive_index % MAX_PROCESS_COUNT].is_ended) {
+            next_alive_index++;
+        }
+        qemu_printf("get_next_process_to_execute switched from ");
+        qemu_printf(itoa(active_process_index));
+        qemu_printf(" to ");
+        qemu_printf(itoa(next_alive_index));)
+        qemu_printf("\n");
+        return processes[next_alive_index];
+    }
+
     void do_switch() {
         if (is_shell_mode && alive_process_count > 0) {
             move_out_of_shell_mode();
         }
-        else if (is_shell_mode && alive_process_count == 0) {
+        else if (!is_shell_mode && alive_process_count == 0) {
             move_to_shell_mode();
+            return;
         }
-        if (alive_process_count >= 2) {
-            qemu_printf("more than 2 processes, have to switch");
-            qemu_printf("\n");
+        process_t next_process = get_next_process_to_execute();
+        if (!next_process.has_started) {
+            execute_code(next_process.entry_address);
         }
+        // if (alive_process_count >= 2) {
+        //     qemu_printf("more than 2 processes, have to switch");
+        //     qemu_printf("\n");
+        // }
+        // // we have 1 process running
+        // if ()
     }
 
     void move_to_shell_mode() {

@@ -10,10 +10,11 @@ namespace scheduler {
         char *name;
         uint32_t entry_address;
         bool is_ended;
+        bool has_started;
     };
 
     static process_t EMPTY_PROCESS = {
-        0, "", 0, true
+        0, "", 0, true, false
     };
 
     void init();
