@@ -42,7 +42,13 @@ using namespace terminal;
 */
 
 typedef unsigned int uword_t __attribute__ ((mode (__word__)));
-struct interrupt_frame;
+struct interrupt_frame {
+    uword_t ip;
+    uword_t cs;
+    uword_t flags;
+    uword_t sp;
+    uword_t ss;
+};
 typedef void (*isr_t)(uword_t);
 
 // TODO: investigate bug, when 2 interrupt handlers have an exact same body
@@ -176,6 +182,11 @@ namespace pic {
 		memset((uint8_t*) interrupt_handlers, 0, sizeof(uint32_t)*256);
     }
 
+	__attribute__((interrupt)) void software_interrupt(interrupt_frame *frame) {
+		kprintf("Software interrupt! ecs: %u", frame->ip);
+		END_OF_INTERRUPT
+	}
+
 	void setup_cpu_dedicated_irqs() {
 		set_gate(0, (uint32_t) &isr0);
 		set_gate(1, (uint32_t) &isr1);
@@ -196,6 +207,7 @@ namespace pic {
 		set_gate(16, (uint32_t) &isr16);
 		set_gate(17, (uint32_t) &isr17);
 		set_gate(18, (uint32_t) &isr18);
+		set_gate(0x80, (uint32_t) software_interrupt);
 	}
 
 	void set_gate(uint8_t index, uint32_t address) {

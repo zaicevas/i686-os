@@ -34,7 +34,7 @@ install-user-space:
 	${CC} ../user-space/hello-world.cpp -o ../user-space/hello-world.o ${CFLAGS}
 
 run: ${ISO_KERNEL}
-	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio 
+	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -d int
 
 run_debug: ${ISO_KERNEL}
 	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -gdb tcp::26000 -S
@@ -60,6 +60,7 @@ ${ISO_KERNEL}: ${KERNEL}
 	@cp grub/grub.cfg tmp/boot/grub
 	@cp ../user-space/hello.txt tmp/boot
 	@cp ../user-space/goodbye.txt tmp/boot
+	@cp ../user-space/call_interrupt tmp/boot
 	@grub-mkrescue -o ${BIN_PATH}/kernel.iso tmp
 	@rm -r tmp
 
