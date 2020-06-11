@@ -182,8 +182,13 @@ namespace pic {
 		memset((uint8_t*) interrupt_handlers, 0, sizeof(uint32_t)*256);
     }
 
-	__attribute__((interrupt)) void software_interrupt(interrupt_frame *frame) {
-		kprintf("Software interrupt! ecs: %u", frame->ip);
+	__attribute__((interrupt)) void sys_call(interrupt_frame *frame) {
+		kprintf("sys_call\n");
+		END_OF_INTERRUPT
+	}
+
+	__attribute__((interrupt)) void sys_exit(interrupt_frame *frame) {
+		kprintf("sys_exit\n");
 		END_OF_INTERRUPT
 	}
 
@@ -207,7 +212,8 @@ namespace pic {
 		set_gate(16, (uint32_t) &isr16);
 		set_gate(17, (uint32_t) &isr17);
 		set_gate(18, (uint32_t) &isr18);
-		set_gate(0x80, (uint32_t) software_interrupt);
+		set_gate(0x80, (uint32_t) &sys_call);
+		set_gate(0x81, (uint32_t) &sys_exit);
 	}
 
 	void set_gate(uint8_t index, uint32_t address) {

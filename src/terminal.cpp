@@ -183,4 +183,13 @@ namespace terminal {
 		return chars_y;
 	}
 
+	void enable_user_shell() {
+		user_shell_active = true;
+		terminal::kprintf("%s", terminal::PS1);
+	}
+
+	void disable_user_shell() {
+		user_shell_active = false;
+	}
+
 }

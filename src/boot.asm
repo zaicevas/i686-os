@@ -3,7 +3,7 @@ bits 32
 section .text
 
 global start
-extern kmain, gdtr
+extern kmain
 
 start:
 	mov esp, stack_top

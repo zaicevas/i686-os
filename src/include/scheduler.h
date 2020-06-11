@@ -12,6 +12,7 @@ namespace scheduler {
     process_t alive_processes[32];
 
     void do_switch();
+    void move_to_shell_mode();
 
 }
 

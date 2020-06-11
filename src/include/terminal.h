@@ -44,6 +44,8 @@ namespace terminal {
 	uint16_t get_chars_x();
 	uint16_t get_chars_y();
 
+	void enable_user_shell();
+	void disable_user_shell();
 }
 
 #endif

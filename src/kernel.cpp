@@ -88,13 +88,9 @@ void kmain(uint64_t multiboot_addr) {
 	terminal::init_user_shell();
 
 	typedef void (*call_module_t)(void);
+    kprintf("module: %s\n", get_module(multiboot_addr, 2)->string);
     call_module_t start_program = (call_module_t) get_module(multiboot_addr, 2)->mod_start;
     start_program();
-	kprintf("post interrupt\n");
-	kprintf("post interrupt\n");
-	kprintf("post interrupt\n");
-	kprintf("post interrupt\n");
-	kprintf("post interrupt\n");
 
 	halt();
 
