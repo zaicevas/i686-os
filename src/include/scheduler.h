@@ -6,7 +6,7 @@
 namespace scheduler {
 
     struct process_t {
-        uint16_t id;
+        uint8_t id;
         char *name;
         uint32_t entry_address;
         bool is_ended;
@@ -25,12 +25,14 @@ namespace scheduler {
 
     void add_process(char *file_name);
     // void start(char *file_name);
-    void kill_process(uint16_t id);
+    void kill_process(uint8_t id);
 
     // will fire when alt+number is pressed
     void on_keyboard_terminate_interrupt(uint8_t number);
 
     void on_process_sys_exit();
+
+    bool get_is_shell_mode();
 
 }
 

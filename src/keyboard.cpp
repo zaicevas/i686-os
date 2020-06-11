@@ -5,6 +5,7 @@
 #include <string.h>
 #include <debug.h>
 #include <pic.h>
+#include <scheduler.h>
 
 #define PS2_COMMAND 0x64
 #define PS2_DATA 0x60
@@ -77,6 +78,9 @@ namespace keyboard {
 	}
 
 	inline static void putc(uint8_t key) {
+		if (!scheduler::get_is_shell_mode())
+			return;
+
 		char ascii = keyboard_to_ascii(key);
 		bool is_letter = ascii >= 'a' && key <= 'z';
 
