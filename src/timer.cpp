@@ -2,13 +2,16 @@
 #include <pic.h>
 #include <terminal.h>
 #include <system.h>
+#include <scheduler.h>
+#include <debug.h>
 
 namespace timer {
 
     static uint64_t ticks = 0; // should never overflow
 
-	__attribute__((interrupt)) void print_smth(struct interrupt_frame *frame) {
+	__attribute__((interrupt)) void timer(struct interrupt_frame *frame) {
 		ticks++;
+        scheduler::do_switch();
 		END_OF_INTERRUPT 
     }
 
@@ -23,7 +26,7 @@ namespace timer {
     void init() {
 		set_frequency(TIMER_HZ_FREQUENCY);
 
-		pic::set_gate(0x20, (uint32_t) &print_smth);
+		pic::set_gate(0x20, (uint32_t) &timer);
 		pic::unmask(0);
     }
 

@@ -78,10 +78,11 @@ void kmain(uint64_t multiboot_addr) {
 
 	kprintf("File system initialized\n");
 
-	// timer::init();
-	// kprintf("PIT ticks initialized\n");
 	scheduler::init();
 	kprintf("Scheduler initialized\n");
+
+	timer::init();
+	kprintf("PIT ticks initialized\n");
 
 	kprintf("MSR support: %s\n", cpu_has_MSR() ? "yes" : "no");
 
@@ -90,7 +91,9 @@ void kmain(uint64_t multiboot_addr) {
 
 	terminal::init_user_shell();
 
-	kprintf("module by name: %s\n", fs::get_file_by_name("call_interrupt")->string);
+	scheduler::add_process("call_interrupt");
+
+	// kprintf("module by name: %s\n", fs::get_file_by_name("call_interrupt")->string);
 	// typedef void (*call_module_t)(void);
     // kprintf("module: %s\n", get_module(multiboot_addr, 2)->string);
     // call_module_t start_program = (call_module_t) get_module(multiboot_addr, 2)->mod_start;

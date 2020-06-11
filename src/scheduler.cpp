@@ -13,7 +13,7 @@ using namespace terminal;
 namespace scheduler {
     uint8_t alive_process_count = 0;
     process_t processes[MAX_PROCESS_COUNT];
-    uint8_t active_process_index = 0;
+    int active_process_index = 0;
     bool is_shell_mode = true;
 
     void move_out_of_shell_mode();
@@ -53,6 +53,7 @@ namespace scheduler {
 
     void kill_process(uint8_t id) {
         processes[id].is_ended = true;
+        alive_process_count--;
     }
 
     void on_keyboard_terminate_interrupt(uint8_t number) {
@@ -70,12 +71,12 @@ namespace scheduler {
         while (processes[next_alive_index % MAX_PROCESS_COUNT].is_ended) {
             next_alive_index++;
         }
-        qemu_printf("get_next_process_to_execute switched from ");
+        qemu_printf("get_next_process_to_execute active_process_index was ");
         qemu_printf(itoa(active_process_index));
-        qemu_printf(" to ");
-        qemu_printf(itoa(next_alive_index));)
+        qemu_printf(", switched to ");
+        qemu_printf(itoa(next_alive_index % MAX_PROCESS_COUNT));
         qemu_printf("\n");
-        return processes[next_alive_index];
+        return processes[next_alive_index % MAX_PROCESS_COUNT];
     }
 
     void do_switch() {
@@ -84,18 +85,15 @@ namespace scheduler {
         }
         else if (!is_shell_mode && alive_process_count == 0) {
             move_to_shell_mode();
+            qemu_printf("moving to shell_mode");
             return;
         }
+        if (alive_process_count == 0)
+            return;
         process_t next_process = get_next_process_to_execute();
         if (!next_process.has_started) {
             execute_code(next_process.entry_address);
         }
-        // if (alive_process_count >= 2) {
-        //     qemu_printf("more than 2 processes, have to switch");
-        //     qemu_printf("\n");
-        // }
-        // // we have 1 process running
-        // if ()
     }
 
     void move_to_shell_mode() {
@@ -111,6 +109,8 @@ namespace scheduler {
     void on_process_sys_exit() {
         kprintf("Process (id: %u) has successfully ended\n", active_process_index);
         kill_process(active_process_index);
+        if (alive_process_count == 0)
+            move_to_shell_mode();
     }
 
     bool get_is_shell_mode() {

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <debug.h>
 #include <terminal.h>
+#include <scheduler.h>
 
 // other interrupts are disabled for this gate, while handler is being run
 // read more: https://wiki.osdev.org/Interrupt_Descriptor_Table
@@ -188,7 +189,7 @@ namespace pic {
 	}
 
 	__attribute__((interrupt)) void sys_exit(interrupt_frame *frame) {
-		kprintf("sys_exit\n");
+		scheduler::on_process_sys_exit();
 		END_OF_INTERRUPT
 	}
 
