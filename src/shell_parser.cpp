@@ -40,7 +40,7 @@ namespace shell_parser {
         else if (contains_first_word(input, "echo")) {
             return PARSED_COMMAND::ECHO;
         }
-        else if (contains_first_word(input, "call_interrupt")) {
+        else if (contains_first_word(input, "call_interrupt") || contains_first_word(input, "call_interrupt_long")) {
             return PARSED_COMMAND::RUN_PROCESS;
         }
         return PARSED_COMMAND::UNKNOWN;
@@ -76,7 +76,10 @@ namespace shell_parser {
                 if ((second_word[0] -'0') == 0)
                     return "";
                 for (uint8_t i=0; i<second_word[0] - '0'; i++) {
-                    scheduler::add_process("call_interrupt");
+                    if (contains_first_word(input, "call_interrupt"))
+                        scheduler::add_process("call_interrupt");
+                    else if (contains_first_word(input, "call_interrupt_long"))
+                        scheduler::add_process("call_interrupt_long");
                 }
                 return nullptr;
             }

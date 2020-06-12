@@ -61,6 +61,7 @@ ${ISO_KERNEL}: ${KERNEL}
 	@cp ../user-space/hello.txt tmp/boot
 	@cp ../user-space/goodbye.txt tmp/boot
 	@cp ../user-space/call_interrupt tmp/boot
+	@cp ../user-space/call_interrupt_long tmp/boot
 	@grub-mkrescue -o ${BIN_PATH}/kernel.iso tmp
 	@rm -r tmp
 
