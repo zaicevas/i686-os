@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define TIMER_HZ_FREQUENCY 100
+#define TIMER_HZ_FREQUENCY 150
 
 namespace timer {
     // ESP and SS could be wrong, need to double check
