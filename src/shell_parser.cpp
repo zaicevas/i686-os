@@ -38,7 +38,7 @@ namespace shell_parser {
         else if (contains_first_word(input, "echo")) {
             return PARSED_COMMAND::ECHO;
         }
-        else if (fs::exists_executable(input)) {
+        else if (fs::exists_executable(trimmed_input)) {
             return PARSED_COMMAND::RUN_PROCESS;
         }
         return PARSED_COMMAND::UNKNOWN;
@@ -61,7 +61,7 @@ namespace shell_parser {
             return ignore_first_word(input);
         }
         else if (cmd == PARSED_COMMAND::RUN_PROCESS) {
-            scheduler::add_process(input);
+            scheduler::add_process(trim(input));
             return nullptr;
         }
 
