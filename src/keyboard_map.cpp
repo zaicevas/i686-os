@@ -7,6 +7,10 @@ namespace keyboard {
 	static char *yxcvbnm = "zxcvbnm";
 	static char *num = "1234567890-=";
 
+	bool is_number(uint8_t key) {
+		return key >= ONE_PRESSED && key <= EQUALS_PRESSED;
+	}
+
 	uint8_t keyboard_to_ascii(uint8_t key) {
 		if (key == BACKSPACE_PRESSED) return '\b';
 		if (key == ENTER_PRESSED) return '\n';

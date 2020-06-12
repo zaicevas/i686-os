@@ -28,6 +28,7 @@ namespace keyboard {
 	static bool caps_lock_led = false;
 	static bool caps_lock_released = true;
 	static bool is_shift_pressed = false;
+	static bool is_ctrl_pressed = false;
 
 	static void putc(uint8_t key);
 	static char to_capital_letter(char c); 
@@ -69,6 +70,17 @@ namespace keyboard {
 				caps_lock_released = true;
 			else if (key == KEYCODE::LEFT_SHIFT_PRESSED || key == KEYCODE::RIGHT_SHIFT_PRESSED || key == KEYCODE::LEFT_SHIFT_RELEASED || key == KEYCODE::RIGHT_SHIFT_RELEASED)
 				is_shift_pressed = key == KEYCODE::LEFT_SHIFT_PRESSED || key == KEYCODE::RIGHT_SHIFT_PRESSED;
+			else if (key == KEYCODE::LEFT_CONTROL_PRESSED || key == LEFT_CONTROL_RELASED)
+				is_ctrl_pressed = key == KEYCODE::LEFT_CONTROL_PRESSED;
+			else if (is_ctrl_pressed && !scheduler::get_is_shell_mode() && is_number(key)) {
+				uint8_t number = keyboard_to_ascii(key) - '0';
+				if (number >= 0 && number <= 9)	{
+					qemu_printf("killing with keyboard process: ");
+					qemu_printf(itoa(number));
+					qemu_printf("\n");
+					scheduler::kill_process(number);
+				}
+			}
 			else if (keyboard_to_ascii(key) != 0) 
 				putc(key);
 
@@ -78,8 +90,10 @@ namespace keyboard {
 	}
 
 	inline static void putc(uint8_t key) {
-		if (!scheduler::get_is_shell_mode())
+		if (!scheduler::get_is_shell_mode()) {
+			terminal::kprintf("nope!\n");
 			return;
+		}
 
 		char ascii = keyboard_to_ascii(key);
 		bool is_letter = ascii >= 'a' && key <= 'z';

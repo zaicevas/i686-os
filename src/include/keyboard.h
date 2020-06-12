@@ -7,6 +7,8 @@ namespace keyboard {
 	void init();
 	uint8_t keyboard_to_ascii(uint8_t key);
 
+	bool is_number(uint8_t key);
+
 	enum KEYCODE {
 		NULL_KEY = 0,
 		Q_PRESSED = 0x10,
@@ -92,6 +94,9 @@ namespace keyboard {
 		LEFT_SHIFT_RELEASED = 0xAA,
 		RIGHT_SHIFT_PRESSED = 0x36,
 		RIGHT_SHIFT_RELEASED = 0xB6,
+
+		LEFT_CONTROL_PRESSED = 0x1D,
+		LEFT_CONTROL_RELASED = 0x9D,
 
 		CAPS_LOCK_PRESSED = 0x3A,
 		CAPS_LOCK_RELEASED = 0xBA

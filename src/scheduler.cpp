@@ -63,6 +63,10 @@ namespace scheduler {
     }
 
     void kill_process(uint8_t id) {
+        if (processes[id].is_ended)
+            return;
+
+        kprintf("Process (id: %u) has ended\n", id);
         processes[id].is_ended = true;
         alive_process_count--;
         if (alive_process_count == 0) {
@@ -164,7 +168,6 @@ namespace scheduler {
     }
 
     void on_process_sys_exit() {
-        kprintf("Process (id: %u) has successfully ended\n", active_process_index);
         qemu_printf("----------------------------- Killed ---------------------------- ");
         qemu_printf(itoa(active_process_index));
         qemu_printf("\n");

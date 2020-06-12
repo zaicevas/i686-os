@@ -63,6 +63,10 @@ namespace shell_parser {
         else if (cmd == PARSED_COMMAND::RUN_PROCESS) {
             scheduler::add_process(trim(input));
             scheduler::add_process(trim(input));
+            scheduler::add_process(trim(input));
+            scheduler::add_process(trim(input));
+            scheduler::add_process(trim(input));
+            scheduler::add_process(trim(input));
             return nullptr;
         }
 
