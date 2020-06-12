@@ -38,7 +38,7 @@ namespace shell_parser {
         else if (contains_first_word(input, "echo")) {
             return PARSED_COMMAND::ECHO;
         }
-        else if (fs::exists_executable(trimmed_input)) {
+        else if (contains_first_word(input, "call_interrupt")) {
             return PARSED_COMMAND::RUN_PROCESS;
         }
         return PARSED_COMMAND::UNKNOWN;
@@ -61,13 +61,23 @@ namespace shell_parser {
             return ignore_first_word(input);
         }
         else if (cmd == PARSED_COMMAND::RUN_PROCESS) {
-            scheduler::add_process(trim(input));
-            scheduler::add_process(trim(input));
-            scheduler::add_process(trim(input));
-            scheduler::add_process(trim(input));
-            scheduler::add_process(trim(input));
-            scheduler::add_process(trim(input));
-            return nullptr;
+            qemu_printf(get_second_word(input));
+            if (!get_second_word(input)) {
+                scheduler::add_process(trim(input));
+                return nullptr;
+            }
+            else {
+                char *second_word = get_second_word(input);
+                if (strlen(second_word) != 1 || second_word[0] > '9' || second_word[0] < 0) {
+                    return "err: wrong arguments";
+                }
+                if ((second_word[0] -'0') == 0)
+                    return "";
+                for (uint8_t i=0; i<second_word[0] - '0'; i++) {
+                    scheduler::add_process("call_interrupt");
+                }
+                return nullptr;
+            }
         }
 
         return "err: unknown command";

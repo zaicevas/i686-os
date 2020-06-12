@@ -54,8 +54,9 @@ bool contains_first_word(char *test, char *word) {
 		}
 	}
 
-	if (test_length - first_non_white_space_index + 1 <= word_length)
+	if (test_length - first_non_white_space_index + 1 <= word_length) {
 		return false;
+	}
 
 	for (uint32_t i=0; i<word_length; i++) {
 		if (word[i] == test[i + first_non_white_space_index])
@@ -78,17 +79,20 @@ char *get_second_word(char *str) {
 	uint32_t str_length = strlen(str);
 	uint32_t second_word_index = 0;
 	bool skipped_first_word = false;
+	bool found_second_word_start = false;
 	for (uint32_t i=1; i<str_length; i++) {
 		if (!skipped_first_word && is_white_space(str[i]) && !is_white_space(str[i-1])) {
 			skipped_first_word = true;
 		}
 		else if (skipped_first_word && !is_white_space(str[i])) {
+			found_second_word_start = true;
 			second_word_index = i;
 			break;
 		}
 	}
-	if (!skipped_first_word)
+	if (!skipped_first_word || !found_second_word_start) {
 		return nullptr;
+	}
 	char *second_word = (char *) memory::kmalloc(str_length - second_word_index + 1);
 	for (uint32_t i=second_word_index; i<str_length; i++) {
 		if (is_white_space(str[i])) {
