@@ -98,6 +98,14 @@ void halt() {
 		goto loop;
 }
 
+void disable_interrupts() {
+    asm volatile ("cli");
+}
+
+void enable_interrupts() {
+    asm volatile ("sti");
+}
+
 void reboot() {
     uint8_t temp;
  

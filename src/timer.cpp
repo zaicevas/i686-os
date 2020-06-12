@@ -4,24 +4,46 @@
 #include <system.h>
 #include <scheduler.h>
 #include <debug.h>
+#include <string.h>
 
 namespace timer {
 
     static uint64_t ticks = 0; // should never overflow
 
-    typedef unsigned int uword_t __attribute__ ((mode (__word__)));
-    struct interrupt_frame {
-        uword_t ip;
-        uword_t cs;
-        uword_t flags;
-        uword_t sp;
-        uword_t ss;
+    extern "C" void timer_interrupt_handler();
+
+    struct registers_t {
+        uint32_t esi, edi, edx, ecx, ebp, ebx, eax, eip, cs, eflags, esp, ss;
     };
 
-	__attribute__((interrupt)) void timer(interrupt_frame *frame) {
+	extern "C" void call_scheduler(registers_t *registers) {
+        // qemu_printf("eax: ");
+        // qemu_printf(itoa(registers->eax));
+        // qemu_printf(", ");
+        // qemu_printf("ebx: ");
+        // qemu_printf(itoa(registers->ebx));
+        // qemu_printf(", ");
+        // qemu_printf("ecx: ");
+        // qemu_printf(itoa(registers->ecx));
+        // qemu_printf(", ");
+        // qemu_printf("edx: ");
+        // qemu_printf(itoa(registers->edx));
+        // qemu_printf(", ");
+        // qemu_printf("edi: ");
+        // qemu_printf(itoa(registers->edi));
+        // qemu_printf(", ");
+        // qemu_printf("esi: ");
+        // qemu_printf(itoa(registers->esi));
+        // qemu_printf(", ");
+        // qemu_printf("cs: ");
+        // qemu_printf(itoa(registers->cs));
+        // qemu_printf(", ");
+        // qemu_printf("eip: ");
+        // qemu_printf(itoa(registers->eip));
+        // qemu_printf(", ");
 		ticks++;
+        // scheduler::do_switch();
 		END_OF_INTERRUPT 
-        scheduler::do_switch();
     }
 
     void set_frequency(uint16_t hz) { // hz times in a second
@@ -35,7 +57,7 @@ namespace timer {
     void init() {
 		set_frequency(TIMER_HZ_FREQUENCY);
 
-		pic::set_gate(0x20, (uint32_t) &timer, true);
+		pic::set_gate(0x20, (uint32_t) timer_interrupt_handler, true);
 		pic::unmask(0);
     }
 
