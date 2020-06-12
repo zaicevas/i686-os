@@ -188,7 +188,9 @@ namespace pic {
     }
 
 	__attribute__((interrupt)) void sys_call(interrupt_frame *frame) {
-		kprintf("sys_call number: %u\n", syscall_count++);
+		uint32_t eax;
+		asm volatile ( "mov %0, %%eax" : "=r"(eax) );
+		kprintf("sys_call number: %u, eax: %u\n", syscall_count++, eax);
 		END_OF_INTERRUPT
 	}
 
