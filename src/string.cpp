@@ -64,6 +64,16 @@ bool contains_first_word(char *test, char *word) {
 	return (match_length == word_length && is_white_space(test[first_non_white_space_index + word_length]));
 }
 
+bool ends_by(char *test, char *end) {
+	uint32_t test_length = strlen(test);
+	uint32_t end_length = strlen(end);
+	for (uint8_t i=test_length-end_length; i<test_length; i++) {
+		if (test[i] != end[i-(test_length-end_length)])
+			return false;
+	}
+	return true;
+}
+
 char *get_second_word(char *str) {
 	uint32_t str_length = strlen(str);
 	uint32_t second_word_index = 0;

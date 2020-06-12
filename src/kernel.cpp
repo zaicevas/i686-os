@@ -91,7 +91,7 @@ void kmain(uint64_t multiboot_addr) {
 
 	terminal::init_user_shell();
 
-	scheduler::add_process("call_interrupt");
+	// scheduler::add_process("call_interrupt");
 
 	// kprintf("module by name: %s\n", fs::get_file_by_name("call_interrupt")->string);
 	// typedef void (*call_module_t)(void);

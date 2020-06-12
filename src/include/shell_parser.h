@@ -12,7 +12,7 @@ namespace shell_parser {
         HELP,
         ECHO,
         REBOOT,
-        PS
+        RUN_PROCESS
     };
 
     char *build_kernel_output(char *input);

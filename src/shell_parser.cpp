@@ -3,6 +3,7 @@
 #include <debug.h>
 #include <system.h>
 #include <fs.h>
+#include <scheduler.h>
 
 namespace shell_parser {
     static char *help_msg = 
@@ -16,16 +17,12 @@ namespace shell_parser {
         "? - print this message\n"
         "reboot - reboot system\n"
         "ls - list files\n"
-        "cat file - print contents of file X\n"
+        "cat file_name - print contents of file X\n"
         "echo X - print X\n"
-        "ps - print all running processes (not implemented yet)\n";
+        "file_name - run file if it's an executable\n";
 
     PARSED_COMMAND parse(char *input) {
         char *trimmed_input = trim(input);
-        qemu_printf(trimmed_input);
-        qemu_printf("\n");
-        qemu_printf(input);
-        qemu_printf("\n");
         if (are_strings_equal(trimmed_input, "?")) {
             return PARSED_COMMAND::HELP;
         }
@@ -35,14 +32,14 @@ namespace shell_parser {
         else if (are_strings_equal(trimmed_input, "ls")) {
             return PARSED_COMMAND::LS;
         }
-        else if (are_strings_equal(trimmed_input, "ps")) {
-            return PARSED_COMMAND::PS;
-        }
         else if (contains_first_word(input, "cat")) {
             return PARSED_COMMAND::CAT;
         }
         else if (contains_first_word(input, "echo")) {
             return PARSED_COMMAND::ECHO;
+        }
+        else if (fs::exists_executable(input)) {
+            return PARSED_COMMAND::RUN_PROCESS;
         }
         return PARSED_COMMAND::UNKNOWN;
     }
@@ -62,6 +59,9 @@ namespace shell_parser {
         }
         else if (cmd == PARSED_COMMAND::ECHO) {
             return ignore_first_word(input);
+        }
+        else if (cmd == PARSED_COMMAND::RUN_PROCESS) {
+            scheduler::add_process(input);
         }
 
         return "err: unknown command";

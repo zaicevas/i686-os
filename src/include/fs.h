@@ -11,6 +11,7 @@ namespace fs {
     char *ls();
     char *cat(char *file_name);
     multiboot_module *get_file_by_name(char *name);
+    bool exists_executable(char *name);
 
 }
 
