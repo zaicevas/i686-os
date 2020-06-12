@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define TIMER_HZ_FREQUENCY 100
+#define TIMER_HZ_FREQUENCY 10
 
 namespace timer {
     void init();

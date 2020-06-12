@@ -11,8 +11,8 @@ namespace timer {
 
 	__attribute__((interrupt)) void timer(struct interrupt_frame *frame) {
 		ticks++;
-        scheduler::do_switch();
 		END_OF_INTERRUPT 
+        scheduler::do_switch();
     }
 
     void set_frequency(uint16_t hz) { // hz times in a second
@@ -26,7 +26,7 @@ namespace timer {
     void init() {
 		set_frequency(TIMER_HZ_FREQUENCY);
 
-		pic::set_gate(0x20, (uint32_t) &timer);
+		pic::set_gate(0x20, (uint32_t) &timer, true);
 		pic::unmask(0);
     }
 

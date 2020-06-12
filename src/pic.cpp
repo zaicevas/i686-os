@@ -9,6 +9,8 @@
 // other interrupts are disabled for this gate, while handler is being run
 // read more: https://wiki.osdev.org/Interrupt_Descriptor_Table
 #define INTERRUPT_GATE 0x8E
+// 'cli' and 'sti' are not called for traps
+#define TRAP_GATE 0x8F
 
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 #define PIC1_COMMAND 0x20
@@ -228,6 +230,17 @@ namespace pic {
 		// We must uncomment the OR below when we get to using user-mode.
 		// It sets the interrupt gate's privilege level to 3.
 		IDT[index].type_attr = INTERRUPT_GATE /* | 0x60 */;
+	}
+
+	void set_gate(uint8_t index, uint32_t address, bool trap) {
+		IDT_entry *IDT = get_idt();
+
+		IDT[index].offset_lowerbits = address & 0xFFFF;
+		IDT[index].selector = KERNEL_CODE_SEGMENT_OFFSET;
+		IDT[index].zero = 0;
+		IDT[index].offset_higherbits = (address & 0xFFFF0000) >> 16;
+
+		IDT[index].type_attr = trap ? TRAP_GATE : INTERRUPT_GATE;
 	}
 
 	// enable interrupt
