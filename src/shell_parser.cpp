@@ -19,7 +19,9 @@ namespace shell_parser {
         "ls - list files\n"
         "cat file_name - print contents of file X\n"
         "echo X - print X\n"
-        "file_name - run file if it's an executable\n";
+        "file_name - run file if it's an executable\n"
+        "file_name X - run file X times concurrently\n"
+        "Ctrl+X - kill process with pid X\n";
 
     PARSED_COMMAND parse(char *input) {
         char *trimmed_input = trim(input);
