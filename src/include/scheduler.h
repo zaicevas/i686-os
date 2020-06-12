@@ -24,7 +24,7 @@ namespace scheduler {
 
     uint8_t generate_process_id();
 
-    void add_process(char *file_name);
+    uint8_t add_process(char *file_name);
     // void start(char *file_name);
     void kill_process(uint8_t id);
 

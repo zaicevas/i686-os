@@ -72,6 +72,10 @@ namespace terminal {
 	}
 
 	static void print_kernel_message(char *s) {
+		if (!s) {
+			kprintf("\n");
+			return;
+		}
 		kprintf("\n%s\n", s);
 		if (user_shell_active)
 			terminal::kprintf("%s", terminal::PS1);

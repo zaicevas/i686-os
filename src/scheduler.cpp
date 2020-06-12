@@ -34,10 +34,14 @@ namespace scheduler {
         return 254; // if we get there, something went terribly wrong
     }
 
-    void add_process(char *file_name) {
+    uint8_t add_process(char *file_name) {
         multiboot_module *file = fs::get_file_by_name(file_name);
         if (!file)
-            return;
+            return 254;
+
+        if (is_shell_mode) {
+            move_out_of_shell_mode();
+        }
 
         uint8_t id = generate_process_id();
 
@@ -50,6 +54,7 @@ namespace scheduler {
 
         processes[id] = new_process;
         alive_process_count++;
+        return id;
     }
 
     void kill_process(uint8_t id) {
@@ -95,9 +100,10 @@ namespace scheduler {
         if (alive_process_count == 0)
             return;
         process_t *next_process = get_next_process_to_execute();
+        active_process_index = next_process->id;
         if (!next_process->has_started) {
             qemu_printf("hasn't started");
-            active_process_index = next_process->id;
+            kprintf("Process (id: %u) has been started\n", active_process_index);
             next_process->has_started = true;
             execute_code(next_process->entry_address);
         }

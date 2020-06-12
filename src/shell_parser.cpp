@@ -62,6 +62,7 @@ namespace shell_parser {
         }
         else if (cmd == PARSED_COMMAND::RUN_PROCESS) {
             scheduler::add_process(input);
+            return nullptr;
         }
 
         return "err: unknown command";
