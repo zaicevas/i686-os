@@ -2,8 +2,15 @@
 #define SCHEDULER_H
 
 #include <stdint.h>
+#include <timer.h>
+
+using namespace timer;
 
 namespace scheduler {
+
+    static registers_t default_registers = {
+        0, 0, 0, 0, 0, 0, 0
+    };
 
     struct process_t {
         uint8_t id;
@@ -11,15 +18,16 @@ namespace scheduler {
         uint32_t entry_address;
         bool is_ended;
         bool has_started;
+        registers_t registers;
     };
 
     static process_t EMPTY_PROCESS = {
-        0, "", 0, true, false
+        0, "", 0, true
     };
 
     void init();
 
-    void do_switch();
+    void do_switch(registers_t *registers);
     void move_to_shell_mode();
 
     uint8_t generate_process_id();

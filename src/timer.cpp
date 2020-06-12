@@ -12,10 +12,6 @@ namespace timer {
 
     extern "C" void timer_interrupt_handler();
 
-    struct registers_t {
-        uint32_t esi, edi, edx, ecx, ebp, ebx, eax, eip, cs, eflags, esp, ss;
-    };
-
 	extern "C" void call_scheduler(registers_t *registers) {
         // qemu_printf("eax: ");
         // qemu_printf(itoa(registers->eax));
@@ -41,8 +37,23 @@ namespace timer {
         // qemu_printf("eip: ");
         // qemu_printf(itoa(registers->eip));
         // qemu_printf(", ");
+        // qemu_printf("esp: ");
+        // qemu_printf(itoa(registers->esp));
+        // qemu_printf(", ");
+        // qemu_printf("ss: ");
+        // qemu_printf(itoa(registers->ss));
+        // qemu_printf(", ");
+        // qemu_printf("eflags: ");
+        // qemu_printf(itoa(registers->eflags));
+        // qemu_printf(", ");
+        // qemu_printf("iret_table_address: ");
+        // qemu_printf(itoa(registers->iret_table_address));
+        // qemu_printf(", ");
+        // qemu_printf("&eip: ");
+        // qemu_printf(itoa((uint32_t) &registers->eip));
+        // qemu_printf(", ");
 		ticks++;
-        // scheduler::do_switch();
+        scheduler::do_switch(registers);
 		END_OF_INTERRUPT 
     }
 
