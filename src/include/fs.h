@@ -13,6 +13,9 @@ namespace fs {
     multiboot_module *get_file_by_name(char *name);
     bool exists_executable(char *name);
 
+    void write_to_hdd(char *text);
+    char *read_from_hdd();
+
 }
 
 #endif

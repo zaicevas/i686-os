@@ -21,7 +21,9 @@ namespace shell_parser {
         "echo X - print X\n"
         "file_name - run file if it's an executable\n"
         "file_name X - run file X times concurrently\n"
-        "Ctrl+X - kill process with pid X\n";
+        "Ctrl+X - kill process with pid X\n"
+        "read - reads from HDD\n"
+        "write __text__ - writes to HDD. Everything after 'write ' is included\n";
 
     PARSED_COMMAND parse(char *input) {
         char *trimmed_input = trim(input);
@@ -43,6 +45,12 @@ namespace shell_parser {
         else if (contains_first_word(input, "call_interrupt") || contains_first_word(input, "call_interrupt_long")) {
             return PARSED_COMMAND::RUN_PROCESS;
         }
+        else if (are_strings_equal(trimmed_input, "read")) {
+            return PARSED_COMMAND::READ;
+        }
+        else if (contains_first_word(input, "write")) {
+            return PARSED_COMMAND::WRITE;
+        }
         return PARSED_COMMAND::UNKNOWN;
     }
 
@@ -61,6 +69,13 @@ namespace shell_parser {
         }
         else if (cmd == PARSED_COMMAND::ECHO) {
             return ignore_first_word(input);
+        }
+        else if (cmd == PARSED_COMMAND::READ) {
+            return fs::read_from_hdd();
+        }
+        else if (cmd == PARSED_COMMAND::WRITE) {
+            fs::write_to_hdd(ignore_first_word_include_spaces(input));
+            return fs::read_from_hdd();
         }
         else if (cmd == PARSED_COMMAND::RUN_PROCESS) {
             qemu_printf(get_second_word(input));

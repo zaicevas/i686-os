@@ -14,9 +14,14 @@ namespace fs {
     static uint8_t files_count = 0;
     static uint8_t file_names_strlen = 0;
     static uint8_t current_file_index = 0;
+    char *hdd_text = nullptr;
+    uint8_t hdd_text_index = 0;
+
     void init(uint8_t files_count) {
         fs::files_count = files_count;
         files = (multiboot_module**) kmalloc(sizeof(multiboot_module*) * files_count);
+        hdd_text = (char *) kmalloc(1024);
+        memset((uint8_t *) hdd_text, 0, 1024);
     }
 
     multiboot_module *get_file_by_name(char *name) {
@@ -65,6 +70,16 @@ namespace fs {
             }
         }
         return false;
+    }
+
+    void write_to_hdd(char *text) {
+        for (uint16_t i=0; i<strlen(text); i++) {
+            hdd_text[hdd_text_index++] = text[i];
+        }
+    }
+
+    char *read_from_hdd() {
+        return hdd_text;
     }
 
 }

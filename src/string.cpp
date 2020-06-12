@@ -124,6 +124,23 @@ char *ignore_first_word(char *str) {
 	return str+second_word_index;
 }
 
+// ignores first word and first whitespace after it
+char *ignore_first_word_include_spaces(char *str) {
+	uint32_t str_length = strlen(str);
+	uint32_t second_word_index = 0;
+	bool skipped_first_word = false;
+	for (uint32_t i=1; i<str_length; i++) {
+		if (!skipped_first_word && is_white_space(str[i-1]) && !is_white_space(str[i-2])) {
+			skipped_first_word = true;
+			second_word_index = i;
+			break;
+		}
+	}
+	if (!skipped_first_word)
+		return nullptr;
+	return str+second_word_index;
+}
+
 char *trim(const char *s) {
 	uint32_t length = strlen(s);
 	char *trimmed = (char *) memory::kmalloc(length);

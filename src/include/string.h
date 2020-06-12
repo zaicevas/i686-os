@@ -14,6 +14,7 @@ bool contains_first_word(char *test, char *word);
 char *get_second_word(char *str);
 
 char *ignore_first_word(char *str);
+char *ignore_first_word_include_spaces(char *str);
 
 bool ends_by(char *test, char *end);
 
