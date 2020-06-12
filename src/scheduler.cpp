@@ -163,6 +163,8 @@ namespace scheduler {
     void on_process_sys_exit() {
         kprintf("Process (id: %u) has successfully ended\n", active_process_index);
         kill_process(active_process_index);
+        asm volatile("sti");
+        while(true) {asm volatile("pause");}
     }
 
     bool get_is_shell_mode() {

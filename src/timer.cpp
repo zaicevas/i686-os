@@ -52,8 +52,10 @@ namespace timer {
         // qemu_printf("&eip: ");
         // qemu_printf(itoa((uint32_t) &registers->eip));
         // qemu_printf(", ");
+        disable_interrupts();
 		ticks++;
         scheduler::do_switch(registers);
+        enable_interrupts();
 		END_OF_INTERRUPT 
     }
 

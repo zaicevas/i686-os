@@ -34,7 +34,7 @@ install-user-space:
 	${CC} ../user-space/hello-world.cpp -o ../user-space/hello-world.o ${CFLAGS}
 
 run: ${ISO_KERNEL}
-	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio 
+	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -d int
 
 run_debug: ${ISO_KERNEL}
 	@qemu-system-i386 -cdrom ${BIN_PATH}/${ISO_KERNEL} -serial stdio -gdb tcp::26000 -S
