@@ -45,14 +45,7 @@ namespace timer {
         // qemu_printf(", ");
         // qemu_printf("eflags: ");
         // qemu_printf(itoa(registers->eflags));
-        // qemu_printf(", ");
-        // qemu_printf("iret_table_address: ");
-        // qemu_printf(itoa(registers->iret_table_address));
-        // qemu_printf(", ");
-        // qemu_printf("&eip: ");
-        // qemu_printf(itoa((uint32_t) &registers->eip));
-        // qemu_printf(", ");
-        disable_interrupts();
+        // qemu_printf("\n");
 		ticks++;
         scheduler::do_switch(registers);
         enable_interrupts();

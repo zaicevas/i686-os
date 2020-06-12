@@ -50,5 +50,55 @@ add eax, 1
 int 0x80
 add eax, 1
 int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
+add eax, 1
+int 0x80
 int 0x81
 ret

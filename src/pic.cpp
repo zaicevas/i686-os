@@ -219,6 +219,19 @@ namespace pic {
 		set_gate(16, (uint32_t) &isr16);
 		set_gate(17, (uint32_t) &isr17);
 		set_gate(18, (uint32_t) &isr18);
+		set_gate(19, (uint32_t) &isr10);
+		set_gate(20, (uint32_t) &isr11);
+		set_gate(21, (uint32_t) &isr12);
+		set_gate(22, (uint32_t) &isr13);
+		set_gate(23, (uint32_t) &isr14);
+		set_gate(24, (uint32_t) &isr15);
+		set_gate(25, (uint32_t) &isr16);
+		set_gate(26, (uint32_t) &isr17);
+		set_gate(27, (uint32_t) &isr18);
+		set_gate(28, (uint32_t) &isr18);
+		set_gate(29, (uint32_t) &isr18);
+		set_gate(30, (uint32_t) &isr18);
+		set_gate(31, (uint32_t) &isr18);
 		set_gate(0x80, (uint32_t) &sys_call);
 		set_gate(0x81, (uint32_t) &sys_exit);
 	}

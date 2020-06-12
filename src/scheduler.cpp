@@ -122,6 +122,9 @@ namespace scheduler {
         qemu_printf(", to: ");
         qemu_printf(itoa(next_process->registers.eip));
         qemu_printf("\n");
+        if (!registers_in_stack || !next_process) {
+            qemu_printf("Something went terribly wrong");
+        }
         *(&registers_in_stack->eip) = next_process->registers.eip;
         // *(&registers_in_stack->eflags) = next_process->registers.eflags;
         // *(&registers_in_stack->ss) = next_process->registers.ss;
@@ -162,9 +165,12 @@ namespace scheduler {
 
     void on_process_sys_exit() {
         kprintf("Process (id: %u) has successfully ended\n", active_process_index);
+        qemu_printf("----------------------------- Killed ---------------------------- ");
+        qemu_printf(itoa(active_process_index));
+        qemu_printf("\n");
         kill_process(active_process_index);
-        asm volatile("sti");
-        while(true) {asm volatile("pause");}
+        // asm volatile("sti");
+        // while(true) {asm volatile("pause");}
     }
 
     bool get_is_shell_mode() {
