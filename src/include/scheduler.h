@@ -43,6 +43,8 @@ namespace scheduler {
 
     bool get_is_shell_mode();
 
+    uint8_t get_active_process_id();
+
 }
 
 #endif

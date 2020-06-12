@@ -138,19 +138,12 @@ namespace scheduler {
         }
         if (alive_process_count == 0)
             return;
-        qemu_printf("do_switch!");
 
         update_current_process_registers(*registers);
 
         process_t *next_process = get_next_process_to_execute();
         update_stack_with_next_process_state(next_process, registers);
         active_process_index = next_process->id;
-        // if (!next_process->has_started) {
-        //     qemu_printf("hasn't started");
-        //     kprintf("Process (id: %u) has been started\n", active_process_index);
-        //     next_process->has_started = true;
-        //     execute_code(next_process->entry_address);
-        // }
     }
 
     void move_to_shell_mode() {
@@ -174,5 +167,9 @@ namespace scheduler {
 
     bool get_is_shell_mode() {
         return is_shell_mode;
+    }
+
+    uint8_t get_active_process_id() {
+        return active_process_index;
     }
 }

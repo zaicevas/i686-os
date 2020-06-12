@@ -190,7 +190,7 @@ namespace pic {
 	__attribute__((interrupt)) void sys_call(interrupt_frame *frame) {
 		uint32_t eax;
 		asm volatile ( "mov %0, %%eax" : "=r"(eax) );
-		kprintf("sys_call number: %u, eax: %u\n", syscall_count++, eax);
+		kprintf("Hello from process with id: %u, eax: %u\n", scheduler::get_active_process_id(), eax);
 		END_OF_INTERRUPT
 	}
 
