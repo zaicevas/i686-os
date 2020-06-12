@@ -61,6 +61,8 @@ namespace pic {
 	void setup_cpu_dedicated_irqs();
 	void handle_cpu_interrupt(uint32_t);
 
+	static uint16_t syscall_count = 0;
+
 	uint32_t interrupt_handlers[256];
 
 	void register_interrupt_handler(uint8_t index, uint32_t handler_address) {
@@ -186,7 +188,7 @@ namespace pic {
     }
 
 	__attribute__((interrupt)) void sys_call(interrupt_frame *frame) {
-		kprintf("sys_call\n");
+		kprintf("sys_call number: %u\n", syscall_count++);
 		END_OF_INTERRUPT
 	}
 

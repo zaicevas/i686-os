@@ -9,7 +9,16 @@ namespace timer {
 
     static uint64_t ticks = 0; // should never overflow
 
-	__attribute__((interrupt)) void timer(struct interrupt_frame *frame) {
+    typedef unsigned int uword_t __attribute__ ((mode (__word__)));
+    struct interrupt_frame {
+        uword_t ip;
+        uword_t cs;
+        uword_t flags;
+        uword_t sp;
+        uword_t ss;
+    };
+
+	__attribute__((interrupt)) void timer(interrupt_frame *frame) {
 		ticks++;
 		END_OF_INTERRUPT 
         scheduler::do_switch();

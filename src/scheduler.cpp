@@ -5,6 +5,7 @@
 #include <debug.h>
 #include <terminal.h>
 #include <string.h>
+#include <system.h>
 
 const uint8_t MAX_PROCESS_COUNT = 10;
 
@@ -13,7 +14,7 @@ using namespace terminal;
 namespace scheduler {
     uint8_t alive_process_count = 0;
     process_t processes[MAX_PROCESS_COUNT];
-    int active_process_index = 0;
+    uint8_t active_process_index = 0;
     bool is_shell_mode = true;
 
     void move_out_of_shell_mode();
@@ -54,8 +55,9 @@ namespace scheduler {
     void kill_process(uint8_t id) {
         processes[id].is_ended = true;
         alive_process_count--;
-        if (alive_process_count == 0)
+        if (alive_process_count == 0) {
             move_to_shell_mode();
+        }
     }
 
     void on_keyboard_terminate_interrupt(uint8_t number) {
@@ -65,10 +67,11 @@ namespace scheduler {
     static void execute_code(uint32_t addr) {
         typedef void (*call_t)(void);
         call_t execute = (call_t) addr;
+        qemu_printf("executing");
         execute();
     }
 
-    static process_t get_next_process_to_execute() {
+    static process_t *get_next_process_to_execute() {
         uint8_t next_alive_index = active_process_index + 1;
         while (processes[next_alive_index % MAX_PROCESS_COUNT].is_ended) {
             next_alive_index++;
@@ -78,7 +81,7 @@ namespace scheduler {
         qemu_printf(", switched to ");
         qemu_printf(itoa(next_alive_index % MAX_PROCESS_COUNT));
         qemu_printf("\n");
-        return processes[next_alive_index % MAX_PROCESS_COUNT];
+        return &processes[next_alive_index % MAX_PROCESS_COUNT];
     }
 
     void do_switch() {
@@ -87,23 +90,29 @@ namespace scheduler {
         }
         else if (!is_shell_mode && alive_process_count == 0) {
             move_to_shell_mode();
-            qemu_printf("moving to shell_mode");
             return;
         }
         if (alive_process_count == 0)
             return;
-        process_t next_process = get_next_process_to_execute();
-        if (!next_process.has_started) {
-            execute_code(next_process.entry_address);
+        process_t *next_process = get_next_process_to_execute();
+        if (!next_process->has_started) {
+            qemu_printf("hasn't started");
+            active_process_index = next_process->id;
+            next_process->has_started = true;
+            execute_code(next_process->entry_address);
         }
     }
 
     void move_to_shell_mode() {
+        qemu_printf("moving to shell_mode");
+        qemu_printf("\n");
         is_shell_mode = true;
         terminal::enable_user_shell();
     }
 
     void move_out_of_shell_mode() {
+        qemu_printf("moving out of shell_mode");
+        qemu_printf("\n");
         is_shell_mode = false;
         terminal::disable_user_shell();
     }
