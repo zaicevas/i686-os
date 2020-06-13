@@ -76,6 +76,10 @@ void kmain(uint64_t multiboot_addr) {
 		fs::add_file(module);
 	}
 
+	memory::update_placement_address(fs::get_furthest_file_address());
+
+	fs::init_hdd();
+
 	kprintf("File system initialized\n");
 
 	scheduler::init();

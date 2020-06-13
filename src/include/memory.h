@@ -9,6 +9,8 @@ extern "C" void *kernel_ends_at;
 namespace memory { 
     void init(uint64_t multiboot_addr);
 
+    void update_placement_address(uint32_t furthest_file_address);
+
     /* prints where kernel binary resides in memory */
     void print_kernel_memory();
 

@@ -21,7 +21,9 @@ namespace fs {
     void init(uint8_t files_count) {
         fs::files_count = files_count;
         files = (multiboot_module**) kmalloc(sizeof(multiboot_module*) * files_count);
+    }
 
+    void init_hdd() {
         hdd_texts = (char **) kmalloc(1024 * sizeof(char*));
         for (uint16_t i=0; i<1024; i++) {
             hdd_texts[i] = (char *) kmalloc(1024);
@@ -90,6 +92,16 @@ namespace fs {
 
     char *read_from_hdd(uint16_t index) {
         return hdd_texts[index];
+    }
+
+    uint32_t get_furthest_file_address() {
+        uint32_t largest_address = 0;
+        for (uint8_t i=0; i<files_count; i++) {
+            if (files[i]->mod_end> largest_address) {
+                largest_address = files[i]->mod_end;
+            }
+        }
+        return largest_address;
     }
 
     // void write_to_hdd(char *text) {

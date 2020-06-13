@@ -18,6 +18,16 @@ namespace memory {
         memory::multiboot_addr = multiboot_addr;
     }
 
+    void update_placement_address(uint32_t furthest_file_address) {
+        if (placement_address < furthest_file_address) {
+            placement_address = furthest_file_address + 1;
+            // placement_address = MEGA_BYTE * 3;
+            qemu_printf("New placement address: ");
+            qemu_printf(itoa(furthest_file_address + 1));
+            qemu_printf("\n");
+        }
+    }
+
     void print_kernel_memory() {
         uint64_t kernel_memory_start = (uint64_t) &kernel_starts_at;
         uint64_t kernel_memory_end = (uint64_t) &kernel_ends_at;
