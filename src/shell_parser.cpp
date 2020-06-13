@@ -71,14 +71,16 @@ namespace shell_parser {
             return ignore_first_word(input);
         }
         else if (cmd == PARSED_COMMAND::READ) {
-            return fs::read_from_hdd();
+            return nullptr;
+            // return fs::read_from_hdd();
         }
         else if (cmd == PARSED_COMMAND::WRITE) {
             if (!ignore_first_word_include_spaces(input)) {
                 return "err: please specify what you want to write";
             }
-            fs::write_to_hdd(ignore_first_word_include_spaces(input));
-            return fs::read_from_hdd();
+            // fs::write_to_hdd(ignore_first_word_include_spaces(input));
+            return nullptr;
+            // return fs::read_from_hdd();
         }
         else if (cmd == PARSED_COMMAND::RUN_PROCESS) {
             qemu_printf(get_second_word(input));

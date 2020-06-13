@@ -14,14 +14,19 @@ namespace fs {
     static uint8_t files_count = 0;
     static uint8_t file_names_strlen = 0;
     static uint8_t current_file_index = 0;
-    char *hdd_text = nullptr;
-    uint8_t hdd_text_index = 0;
+    uint16_t hdd_text_indexes[1024] = {0};
+
+    char **hdd_texts = nullptr;
 
     void init(uint8_t files_count) {
         fs::files_count = files_count;
         files = (multiboot_module**) kmalloc(sizeof(multiboot_module*) * files_count);
-        hdd_text = (char *) kmalloc(1024);
-        memset((uint8_t *) hdd_text, 0, 1024);
+
+        hdd_texts = (char **) kmalloc(1024 * sizeof(char*));
+        for (uint16_t i=0; i<1024; i++) {
+            hdd_texts[i] = (char *) kmalloc(1024);
+            memset((uint8_t *) hdd_texts[i], 0, 1024);
+        }
     }
 
     multiboot_module *get_file_by_name(char *name) {
@@ -72,14 +77,29 @@ namespace fs {
         return false;
     }
 
-    void write_to_hdd(char *text) {
+    void clear_file(uint16_t index) {
+        memset((uint8_t *) hdd_texts[index], 0, 1024);
+        hdd_text_indexes[index] = 0;
+    }
+
+    void write_to_hdd(uint16_t index, char *text) {
         for (uint16_t i=0; i<strlen(text); i++) {
-            hdd_text[hdd_text_index++] = text[i];
+            hdd_texts[index][hdd_text_indexes[index]++] = text[i];
         }
     }
 
-    char *read_from_hdd() {
-        return hdd_text;
+    char *read_from_hdd(uint16_t index) {
+        return hdd_texts[index];
     }
+
+    // void write_to_hdd(char *text) {
+    //     for (uint16_t i=0; i<strlen(text); i++) {
+    //         hdd_text[hdd_text_index++] = text[i];
+    //     }
+    // }
+
+    // char *read_from_hdd() {
+    //     return hdd_text;
+    // }
 
 }
