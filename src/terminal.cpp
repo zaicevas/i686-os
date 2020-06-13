@@ -17,6 +17,8 @@ namespace terminal {
 	static uint16_t chars_y = 0;
 	static canvas_t screen_canvas = {};
 
+	static bool post_kernel_initialize = false;
+
 	static VGA_MODE vga_mode = VGA_MODE::UNKNOWN;
 
 	static uint8_t get_alpha_byte_position(multiboot_framebuffer_color_info color_info);
@@ -188,12 +190,18 @@ namespace terminal {
 	}
 
 	void enable_user_shell() {
+		qemu_printf("----- yes -----");
+		post_kernel_initialize = true;
 		user_shell_active = true;
 		terminal::kprintf("%s", terminal::PS1);
 	}
 
 	void disable_user_shell() {
 		user_shell_active = false;
+	}
+
+	bool is_user_shell_initialized() {
+		return post_kernel_initialize;
 	}
 
 }

@@ -136,15 +136,18 @@ namespace scheduler {
     }
 
     void do_switch(registers_t *registers) {
-        if (is_shell_mode && alive_process_count > 0) {
+        if (alive_process_count == 0 && is_shell_mode) {
+            if (terminal::is_user_shell_initialized())
+                registers->eip = (uint32_t) &halt;
+            return;
+        }
+        else if (is_shell_mode && alive_process_count > 0) {
             move_out_of_shell_mode();
         }
         else if (!is_shell_mode && alive_process_count == 0) {
             move_to_shell_mode();
             return;
         }
-        if (alive_process_count == 0)
-            return;
 
         update_current_process_registers(*registers);
 

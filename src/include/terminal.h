@@ -46,6 +46,7 @@ namespace terminal {
 
 	void enable_user_shell();
 	void disable_user_shell();
+	bool is_user_shell_initialized();
 }
 
 #endif
