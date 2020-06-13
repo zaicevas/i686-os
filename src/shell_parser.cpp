@@ -74,6 +74,9 @@ namespace shell_parser {
             return fs::read_from_hdd();
         }
         else if (cmd == PARSED_COMMAND::WRITE) {
+            if (!ignore_first_word_include_spaces(input)) {
+                return "err: please specify what you want to write";
+            }
             fs::write_to_hdd(ignore_first_word_include_spaces(input));
             return fs::read_from_hdd();
         }
