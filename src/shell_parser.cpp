@@ -22,8 +22,9 @@ namespace shell_parser {
         "file_name - run file if it's an executable\n"
         "file_name X - run file X times concurrently\n"
         "Ctrl+X - kill process with pid X\n"
-        "read - reads from HDD\n"
-        "write __text__ - writes to HDD. Everything after 'write ' is included\n";
+        "read X - reads X from HDD\n"
+        "delete X - deletes X from HDD\n"
+        "write X __text__ - writes to file X in HDD. Everything after 'write ' is included\n";
 
     PARSED_COMMAND parse(char *input) {
         char *trimmed_input = trim(input);
@@ -45,11 +46,14 @@ namespace shell_parser {
         else if (contains_first_word(input, "call_interrupt") || contains_first_word(input, "call_interrupt_long")) {
             return PARSED_COMMAND::RUN_PROCESS;
         }
-        else if (are_strings_equal(trimmed_input, "read")) {
+        else if (contains_first_word(input, "read")) {
             return PARSED_COMMAND::READ;
         }
         else if (contains_first_word(input, "write")) {
             return PARSED_COMMAND::WRITE;
+        }
+        else if (contains_first_word(input, "delete")) {
+            return PARSED_COMMAND::DELETE;
         }
         return PARSED_COMMAND::UNKNOWN;
     }
@@ -71,15 +75,46 @@ namespace shell_parser {
             return ignore_first_word(input);
         }
         else if (cmd == PARSED_COMMAND::READ) {
-            return nullptr;
+            if (!get_second_word(input))
+                return "err: wrong arguments";
+            qemu_printf(get_second_word(input));
+            uint16_t number = atoi(get_second_word(input));
+            if (number >= 1024) {
+                return "err: wrong arguments";
+            }
+            return fs::read_from_hdd(number);
             // return fs::read_from_hdd();
         }
+        else if (cmd == PARSED_COMMAND::DELETE) {
+            if (!get_second_word(input))
+                return "err: wrong arguments";
+            qemu_printf(get_second_word(input));
+            uint16_t number = atoi(get_second_word(input));
+            if (number >= 1024) {
+                return "err: wrong arguments";
+            }
+            fs::clear_file(number);
+            return "";
+        }
         else if (cmd == PARSED_COMMAND::WRITE) {
-            if (!ignore_first_word_include_spaces(input)) {
+            if (!ignore_first_word_include_spaces(input) || 
+                !ignore_first_word_include_spaces(ignore_first_word_include_spaces(input))) {
                 return "err: please specify what you want to write";
             }
-            // fs::write_to_hdd(ignore_first_word_include_spaces(input));
-            return nullptr;
+            qemu_printf(get_second_word(input));
+            uint16_t number = atoi(get_second_word(input));
+            qemu_printf("number: ");
+            qemu_printf(itoa(number));
+            qemu_printf("\n");
+            if (number >= 1024) {
+                return "err: wrong arguments";
+            }
+
+            char *text = ignore_first_word_include_spaces(ignore_first_word_include_spaces(input));
+
+            fs::write_to_hdd(number, text);
+            return fs::read_from_hdd(number);
+            // return nullptr;
             // return fs::read_from_hdd();
         }
         else if (cmd == PARSED_COMMAND::RUN_PROCESS) {

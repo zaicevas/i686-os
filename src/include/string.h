@@ -15,9 +15,14 @@ char *get_second_word(char *str);
 
 char *ignore_first_word(char *str);
 char *ignore_first_word_include_spaces(char *str);
+char *ignore_first_two_words(char *str);
 
 bool ends_by(char *test, char *end);
 
 char *trim(const char *s);
+
+uint16_t atoi(const char *str);
+
+bool is_digit(char c);
 
 #endif

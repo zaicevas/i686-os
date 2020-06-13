@@ -14,7 +14,8 @@ namespace shell_parser {
         REBOOT,
         RUN_PROCESS,
         WRITE,
-        READ
+        READ,
+        DELETE
     };
 
     char *build_kernel_output(char *input);

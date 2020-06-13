@@ -141,6 +141,26 @@ char *ignore_first_word_include_spaces(char *str) {
 	return str+second_word_index;
 }
 
+char *ignore_first_two_words(char *str) {
+	uint32_t str_length = strlen(str);
+	uint32_t third_word_index = 0;
+	bool skipped_first_word = false;
+	bool skipped_second_word = false;
+	for (uint32_t i=1; i<str_length; i++) {
+		if (!skipped_first_word && is_white_space(str[i-1]) && !is_white_space(str[i-2])) {
+			skipped_first_word = true;
+		}
+		if (skipped_first_word && is_white_space(str[i-1]) && !is_white_space(str[i-2])) {
+			skipped_second_word = true;
+			third_word_index = i;
+			break;
+		}
+	}
+	if (!skipped_first_word || !skipped_second_word)
+		return nullptr;
+	return str+third_word_index;
+}
+
 char *trim(const char *s) {
 	uint32_t length = strlen(s);
 	char *trimmed = (char *) memory::kmalloc(length);
@@ -151,4 +171,19 @@ char *trim(const char *s) {
 	}
 	trimmed[j] = 0;
 	return trimmed;
+}
+
+bool is_digit(char c) {
+  return c >= '0' && c <= '9';
+}
+
+uint16_t atoi(const char *str) {
+  uint16_t value = 0;
+  while (is_digit(*str)) {
+    value *= 10;
+    value += (*str)-'0';
+    str++;
+  }
+
+  return value;
 }
