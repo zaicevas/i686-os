@@ -95,8 +95,7 @@ namespace terminal {
 	}
 
 	void init_user_shell() {
-		user_shell_active = true;
-		terminal::kprintf("%s", terminal::PS1);
+		enable_user_shell();
 	}
 
 	void delete_char() {

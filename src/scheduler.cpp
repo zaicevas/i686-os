@@ -17,6 +17,9 @@ namespace scheduler {
     uint8_t active_process_index = 0;
     bool is_shell_mode = true;
 
+    uint32_t default_eip = 0;
+    bool default_eip_set = false;
+
     void move_out_of_shell_mode();
 
     void init() {
@@ -136,9 +139,14 @@ namespace scheduler {
     }
 
     void do_switch(registers_t *registers) {
+        if (!default_eip_set && terminal::is_user_shell_initialized()) {
+            default_eip = registers->eip;
+            default_eip_set = true;
+        }
         if (alive_process_count == 0 && is_shell_mode) {
-            if (terminal::is_user_shell_initialized())
-                registers->eip = (uint32_t) &halt;
+            if (terminal::is_user_shell_initialized()) {
+                registers->eip = default_eip;
+            }
             return;
         }
         else if (is_shell_mode && alive_process_count > 0) {
