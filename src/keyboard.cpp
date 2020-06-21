@@ -91,7 +91,6 @@ namespace keyboard {
 
 	inline static void putc(uint8_t key) {
 		if (!scheduler::get_is_shell_mode()) {
-			terminal::kprintf("nope!\n");
 			return;
 		}
 
